@@ -1,0 +1,6380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>AURA POD — Premium Print On Demand</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+
+<style>
+
+/* =========================================================
+   ROOT
+========================================================= */
+
+:root{
+    --red:#d90429;
+    --red-dark:#a90320;
+    --black:#080808;
+    --dark:#101010;
+    --dark-2:#171717;
+    --white:#fff;
+    --muted:#8e8e8e;
+    --light:#f4f4f2;
+    --border:rgba(255,255,255,.14);
+    --shadow:0 25px 80px rgba(0,0,0,.35);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Inter,Arial,sans-serif;
+    background:var(--black);
+    color:#fff;
+    overflow-x:hidden;
+}
+
+body.modal-open{
+    overflow:hidden;
+}
+
+button,
+input,
+textarea,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+a{
+    color:inherit;
+    text-decoration:none;
+}
+
+/* =========================================================
+   NAVBAR
+========================================================= */
+
+.navbar{
+    position:fixed;
+    top:18px;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(1200px,94%);
+    height:66px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 12px 0 24px;
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:18px;
+    background:rgba(8,8,8,.68);
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    z-index:10000;
+    box-shadow:0 15px 50px rgba(0,0,0,.2);
+}
+
+.logo{
+    font-family:"Space Grotesk",sans-serif;
+    font-size:1.2rem;
+    font-weight:900;
+    letter-spacing:.12em;
+}
+
+.logo span{
+    color:var(--red);
+}
+
+.nav-links{
+    display:flex;
+    align-items:center;
+    gap:30px;
+}
+
+.nav-links a{
+    color:#ddd;
+    font-size:.72rem;
+    font-weight:700;
+    letter-spacing:.1em;
+    transition:.25s;
+}
+
+.nav-links a:hover{
+    color:#fff;
+}
+
+.nav-actions{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.auth-nav-btn{
+    min-width:82px;
+    height:40px;
+    padding:0 15px;
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:11px;
+    background:rgba(255,255,255,.07);
+    color:#fff;
+    font-size:.68rem;
+    font-weight:800;
+    letter-spacing:.08em;
+}
+
+.auth-nav-btn:hover{
+    background:var(--red);
+    border-color:var(--red);
+}
+
+.nav-icon{
+    position:relative;
+    width:42px;
+    height:42px;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:11px;
+    background:rgba(255,255,255,.07);
+    color:#fff;
+}
+
+.cart-count{
+    position:absolute;
+    right:-5px;
+    top:-6px;
+    min-width:18px;
+    height:18px;
+    padding:0 4px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:20px;
+    background:var(--red);
+    color:#fff;
+    font-size:.58rem;
+    font-weight:900;
+}
+
+/* =========================================================
+   USER MENU
+========================================================= */
+
+.user-menu{
+    position:relative;
+}
+
+.user-dropdown{
+    position:absolute;
+    top:52px;
+    right:0;
+    width:245px;
+    padding:18px;
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:16px;
+    background:rgba(15,15,15,.96);
+    box-shadow:var(--shadow);
+    display:none;
+    z-index:10010;
+}
+
+.user-dropdown.active{
+    display:block;
+}
+
+.user-dropdown-name{
+    color:#fff;
+    font-weight:800;
+    font-size:.88rem;
+}
+
+.user-dropdown-email{
+    margin-top:5px;
+    color:#888;
+    font-size:.7rem;
+    word-break:break-all;
+}
+
+.user-dropdown button{
+    width:100%;
+    margin-top:16px;
+    padding:11px;
+    border:0;
+    border-radius:9px;
+    background:var(--red);
+    color:#fff;
+    font-size:.68rem;
+    font-weight:800;
+}
+
+/* =========================================================
+   MOBILE MENU — COMPLETE REPLACEMENT
+========================================================= */
+
+.mobile-menu-btn{
+    display:none;
+    width:44px;
+    height:44px;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+    background:#d90429 !important;
+    border:0 !important;
+    border-radius:10px;
+    color:#fff !important;
+    cursor:pointer;
+    position:relative;
+    z-index:100001;
+}
+
+.mobile-menu-btn span{
+    display:block !important;
+    width:20px;
+    height:3px;
+    margin:3px 0;
+    background:#fff !important;
+    border-radius:3px;
+}
+
+/* FULL SCREEN BLACK BACKDROP */
+.mobile-menu-overlay{
+    position:fixed !important;
+    inset:0 !important;
+    width:100vw !important;
+    height:100vh !important;
+
+    background:#000 !important;
+    background-color:#000 !important;
+    background-image:none !important;
+
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+
+    z-index:99998 !important;
+
+    transition:opacity .25s ease,
+               visibility .25s ease;
+}
+
+/* OPEN */
+.mobile-menu-overlay.active{
+    opacity:1 !important;
+    visibility:visible !important;
+    pointer-events:auto !important;
+}
+
+/* SOLID BLACK MENU */
+.mobile-menu-panel{
+    position:absolute !important;
+
+    top:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+
+    width:min(360px,88vw) !important;
+    height:100vh !important;
+
+    box-sizing:border-box !important;
+
+    padding:90px 30px 35px !important;
+
+    background:#000 !important;
+    background-color:#000 !important;
+    background-image:none !important;
+
+    border-left:1px solid #222 !important;
+
+    opacity:1 !important;
+    visibility:visible !important;
+
+    overflow-y:auto !important;
+
+    transform:translateX(100%);
+    transition:transform .3s ease;
+
+    z-index:99999 !important;
+}
+
+/* SLIDE OPEN */
+.mobile-menu-overlay.active .mobile-menu-panel{
+    transform:translateX(0) !important;
+}
+
+/* MENU LOGO */
+.mobile-menu-logo{
+    color:#fff !important;
+    background:transparent !important;
+}
+
+/* ALL MENU LINKS */
+.mobile-menu-panel > a{
+    display:block !important;
+
+    width:100% !important;
+    box-sizing:border-box !important;
+
+    padding:18px 0 !important;
+
+    color:#fff !important;
+    background:#000 !important;
+
+    border-bottom:1px solid #222 !important;
+
+    font-size:.8rem !important;
+    font-weight:800 !important;
+    letter-spacing:.12em !important;
+
+    text-decoration:none !important;
+}
+
+/* HOVER */
+.mobile-menu-panel > a:hover{
+    color:#d90429 !important;
+    background:#000 !important;
+}
+
+/* DIVIDER */
+.mobile-menu-divider{
+    width:100% !important;
+    height:1px !important;
+
+    margin:25px 0 !important;
+
+    background:#222 !important;
+}
+
+/* LOGIN / REGISTER / OTHER ACTION BUTTONS */
+.mobile-menu-action{
+    width:100% !important;
+
+    margin-top:10px !important;
+    padding:15px !important;
+
+    background:#111 !important;
+    color:#fff !important;
+
+    border:1px solid #333 !important;
+    border-radius:10px !important;
+
+    font-size:.72rem !important;
+    font-weight:800 !important;
+}
+
+/* CLOSE BUTTON */
+.mobile-menu-close{
+    position:absolute !important;
+
+    top:22px !important;
+    right:22px !important;
+
+    width:42px !important;
+    height:42px !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    background:#111 !important;
+    color:#fff !important;
+
+    border:1px solid #333 !important;
+    border-radius:10px !important;
+
+    font-size:1.7rem !important;
+    cursor:pointer !important;
+}
+
+/* MOBILE ONLY */
+@media(max-width:800px){
+
+    .mobile-menu-btn{
+        display:flex !important;
+    }
+
+}
+
+/* DESKTOP */
+@media(min-width:801px){
+
+    .mobile-menu-overlay{
+        display:none !important;
+    }
+
+    .mobile-menu-btn{
+        display:none !important;
+    }
+
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+    position:relative;
+    min-height:900px;
+    overflow:hidden;
+    background:#090909;
+}
+
+.hero-background{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    opacity:.72;
+}
+
+.hero-overlay{
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(90deg,rgba(0,0,0,.93) 0%,rgba(0,0,0,.67) 48%,rgba(0,0,0,.2) 100%);
+}
+
+.hero-red-light{
+    position:absolute;
+    width:650px;
+    height:650px;
+    right:-180px;
+    top:15%;
+    border-radius:50%;
+    background:rgba(217,4,41,.16);
+    filter:blur(100px);
+}
+
+.hero-container{
+    position:relative;
+    width:min(1200px,94%);
+    min-height:900px;
+    margin:auto;
+}
+
+.hero-content{
+    position:absolute;
+    left:2%;
+    top:50%;
+    transform:translateY(-50%);
+    width:50%;
+    z-index:30;
+}
+
+.hero-label{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    color:#ddd;
+    font-size:.67rem;
+    font-weight:700;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+}
+
+.hero-label-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--red);
+    box-shadow:0 0 20px var(--red);
+}
+
+.hero-title{
+    margin-top:20px;
+    font-family:"Space Grotesk",sans-serif;
+    font-size:clamp(4rem,7vw,7rem);
+    line-height:.87;
+    letter-spacing:-.07em;
+    font-weight:900;
+}
+
+.hero-title .red{
+    color:var(--red);
+}
+
+.hero-title .outline{
+    color:transparent;
+    -webkit-text-stroke:1.5px rgba(255,255,255,.8);
+}
+
+.hero-description{
+    max-width:540px;
+    margin-top:28px;
+    color:#b7b7b7;
+    font-size:.88rem;
+    line-height:1.8;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:12px;
+    margin-top:30px;
+}
+
+.btn{
+    min-height:48px;
+    padding:0 22px;
+    border-radius:12px;
+    border:1px solid transparent;
+    font-size:.68rem;
+    font-weight:900;
+    letter-spacing:.08em;
+}
+
+.btn-red{
+    background:var(--red);
+    color:#fff;
+}
+
+.btn-red:hover{
+    background:var(--red-dark);
+}
+
+.btn-outline{
+    border-color:rgba(255,255,255,.25);
+    background:rgba(255,255,255,.05);
+    color:#fff;
+}
+
+.btn-outline:hover{
+    background:#fff;
+    color:#111;
+}
+
+/* =========================================================
+   DIAMONDS
+========================================================= */
+
+.diamond-stage{
+    position:absolute;
+    right:3%;
+    top:50%;
+    transform:translateY(-50%);
+    width:520px;
+    height:650px;
+    z-index:20;
+    perspective:1500px;
+    pointer-events:none;
+}
+
+.diamond{
+    position:absolute;
+    transform-style:preserve-3d;
+    transition:transform .18s ease-out;
+}
+
+.diamond-body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    transform:rotate(45deg);
+    border:1px solid rgba(255,255,255,.3);
+    background:#111;
+    box-shadow:0 30px 70px rgba(0,0,0,.5);
+}
+
+.diamond-body img{
+    width:142%;
+    height:142%;
+    margin:-21%;
+    object-fit:cover;
+    transform:rotate(-45deg);
+}
+
+.diamond-1{
+    width:285px;
+    height:285px;
+    top:35px;
+    left:95px;
+}
+
+.diamond-2{
+    width:245px;
+    height:245px;
+    top:125px;
+    right:15px;
+}
+
+.diamond-3{
+    width:300px;
+    height:300px;
+    top:285px;
+    left:70px;
+}
+
+.diamond-4{
+    width:225px;
+    height:225px;
+    top:390px;
+    right:25px;
+}
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+.section{
+    padding:120px 6%;
+    background:#090909;
+}
+
+.section-light{
+    background:var(--light);
+    color:#111;
+}
+
+.section-header{
+    max-width:1200px;
+    margin:auto;
+}
+
+.section-label{
+    color:var(--red);
+    font-size:.67rem;
+    font-weight:900;
+    letter-spacing:.18em;
+}
+
+.section-title{
+    margin-top:15px;
+    font-family:"Space Grotesk";
+    font-size:clamp(3rem,6vw,6rem);
+    line-height:.9;
+    letter-spacing:-.06em;
+}
+
+/* =========================================================
+   PRODUCTS
+========================================================= */
+
+.aura-products-grid{
+    width:min(1200px,100%);
+    margin:45px auto 0;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+}
+
+.aura-product-card{
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:24px;
+    background:
+        linear-gradient(145deg,rgba(255,255,255,.11),rgba(255,255,255,.035));
+    box-shadow:0 25px 70px rgba(0,0,0,.22);
+    backdrop-filter:blur(15px);
+}
+
+.aura-product-image{
+    position:relative;
+    height:390px;
+    overflow:hidden;
+    cursor:pointer;
+    background:#171717;
+}
+
+.aura-product-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:.5s;
+}
+
+.aura-product-card:hover .aura-product-image img{
+    transform:scale(1.04);
+}
+
+.aura-badge{
+    position:absolute;
+    top:18px;
+    left:18px;
+    padding:8px 11px;
+    border-radius:9px;
+    background:var(--red);
+    color:#fff;
+    font-size:.58rem;
+    font-weight:900;
+    letter-spacing:.08em;
+}
+
+.aura-explore{
+    position:absolute;
+    right:18px;
+    bottom:18px;
+    padding:9px 14px;
+    border:1px solid rgba(255,255,255,.25);
+    border-radius:30px;
+    background:rgba(0,0,0,.55);
+    color:#fff;
+    backdrop-filter:blur(10px);
+    font-size:.6rem;
+    font-weight:900;
+}
+
+.aura-product-info{
+    padding:24px;
+}
+
+.aura-product-category{
+    color:#999;
+    font-size:.59rem;
+    font-weight:800;
+    letter-spacing:.13em;
+}
+
+.aura-product-info h3{
+    margin-top:8px;
+    font-family:"Space Grotesk";
+    font-size:1.35rem;
+}
+
+.aura-product-rating{
+    display:flex;
+    gap:9px;
+    margin-top:10px;
+    color:#999;
+    font-size:.68rem;
+}
+
+.aura-product-rating span:first-child{
+    color:#fff;
+}
+
+.aura-product-bottom{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin-top:22px;
+}
+
+.aura-product-price{
+    font-family:"Space Grotesk";
+    font-size:1.25rem;
+    font-weight:800;
+}
+
+.aura-buttons{
+    display:flex;
+    gap:7px;
+}
+
+.aura-cart-btn,
+.aura-buy-btn{
+    padding:10px 12px;
+    border-radius:9px;
+    font-size:.58rem;
+    font-weight:900;
+}
+
+.aura-cart-btn{
+    border:1px solid rgba(255,255,255,.2);
+    background:rgba(255,255,255,.07);
+    color:#fff;
+}
+
+.aura-buy-btn{
+    border:0;
+    background:var(--red);
+    color:#fff;
+}
+
+/* =========================================================
+   STUDIO
+========================================================= */
+
+.studio{
+    width:min(1200px,100%);
+    margin:auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:70px;
+    align-items:center;
+}
+
+.studio-preview{
+    min-height:600px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.custom-product-preview{
+    position:relative;
+    width:min(440px,90%);
+}
+
+.custom-product-preview>img{
+    width:100%;
+    display:block;
+    border-radius:22px;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+}
+
+.custom-design-layer{
+    position:absolute;
+    left:50%;
+    top:45%;
+    width:55%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+}
+
+#customDesignText{
+    color:#fff;
+    font-family:"Space Grotesk";
+    font-size:clamp(1.2rem,3vw,2.2rem);
+    font-weight:900;
+    text-transform:uppercase;
+    word-break:break-word;
+}
+
+#customUploadedImage{
+    max-width:100%;
+    max-height:160px;
+    margin:auto;
+    object-fit:contain;
+}
+
+.studio-copy h2{
+    margin-top:15px;
+    font-family:"Space Grotesk";
+    font-size:clamp(3rem,6vw,5.8rem);
+    line-height:.86;
+    letter-spacing:-.07em;
+}
+
+.studio-copy>p{
+    max-width:540px;
+    margin-top:25px;
+    color:#999;
+    line-height:1.8;
+    font-size:.86rem;
+}
+
+.custom-studio-panel{
+    margin-top:30px;
+    padding:22px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:20px;
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(20px);
+}
+
+.studio-control{
+    margin-bottom:17px;
+}
+
+.studio-control label{
+    display:block;
+    margin-bottom:8px;
+    color:#aaa;
+    font-size:.58rem;
+    font-weight:900;
+    letter-spacing:.12em;
+}
+
+.studio-control input,
+.studio-control select{
+    width:100%;
+    height:45px;
+    padding:0 13px;
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:10px;
+    outline:0;
+    background:#151515;
+    color:#fff;
+}
+
+.studio-control input[type="file"]{
+    padding-top:12px;
+}
+
+.studio-color-row{
+    display:flex;
+    gap:9px;
+}
+
+.studio-color{
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    border:2px solid rgba(255,255,255,.5);
+}
+
+.studio-color.black{background:#000;}
+.studio-color.white{background:#fff;}
+.studio-color.red{background:var(--red);}
+
+.studio-quantity{
+    display:flex;
+    width:max-content;
+    align-items:center;
+    border:1px solid rgba(255,255,255,.2);
+    border-radius:11px;
+    overflow:hidden;
+    background:#171717;
+}
+
+.studio-quantity button{
+    width:42px;
+    height:40px;
+    border:0;
+    background:rgba(255,255,255,.07);
+    color:#fff;
+    font-size:1.1rem;
+}
+
+.studio-quantity span{
+    width:48px;
+    text-align:center;
+    color:#fff;
+    font-weight:800;
+}
+
+.studio-actions{
+    display:flex;
+    gap:10px;
+}
+
+.studio-message{
+    min-height:20px;
+    margin-top:13px;
+    font-size:.68rem;
+}
+
+/* =========================================================
+   ABOUT
+========================================================= */
+
+.about-text{
+    width:min(850px,100%);
+    margin:35px auto 0;
+    color:#555;
+    font-size:1rem;
+    line-height:2;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer{
+    padding:70px 6% 25px;
+    background:#050505;
+    border-top:1px solid rgba(255,255,255,.08);
+}
+
+.footer-grid{
+    width:min(1200px,100%);
+    margin:auto;
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr 1fr;
+    gap:40px;
+}
+
+.footer-brand p{
+    max-width:350px;
+    margin-top:18px;
+    color:#777;
+    font-size:.78rem;
+    line-height:1.8;
+}
+
+.footer-title{
+    margin-bottom:15px;
+    color:#fff;
+    font-size:.68rem;
+    font-weight:900;
+    letter-spacing:.1em;
+}
+
+footer a{
+    display:block;
+    margin:10px 0;
+    color:#777;
+    font-size:.7rem;
+}
+
+footer a:hover{
+    color:#fff;
+}
+
+.footer-bottom{
+    width:min(1200px,100%);
+    margin:50px auto 0;
+    padding-top:20px;
+    border-top:1px solid rgba(255,255,255,.08);
+    display:flex;
+    justify-content:space-between;
+    color:#555;
+    font-size:.65rem;
+}
+
+/* =========================================================
+   CART
+========================================================= */
+
+.cart-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    opacity:0;
+    visibility:hidden;
+    transition:.25s;
+    z-index:15000;
+}
+
+.cart-overlay.active{
+    opacity:1;
+    visibility:visible;
+}
+
+.cart{
+    position:fixed;
+    top:0;
+    right:0;
+    width:min(430px,92%);
+    height:100vh;
+    background:#101010;
+    border-left:1px solid rgba(255,255,255,.1);
+    z-index:15001;
+    transform:translateX(100%);
+    transition:.3s;
+    display:flex;
+    flex-direction:column;
+}
+
+.cart.active{
+    transform:translateX(0);
+}
+
+.cart-header{
+    padding:25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.cart-header h3{
+    font-family:"Space Grotesk";
+}
+
+.close-cart{
+    width:38px;
+    height:38px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:10px;
+    background:#181818;
+    color:#fff;
+    font-size:1.4rem;
+}
+
+.cart-items{
+    flex:1;
+    overflow:auto;
+    padding:20px;
+}
+
+.empty-cart{
+    padding:70px 20px;
+    text-align:center;
+    color:#666;
+    font-size:.8rem;
+}
+
+.cart-item{
+    display:grid;
+    grid-template-columns:70px 1fr 35px;
+    gap:13px;
+    align-items:center;
+    padding:13px 0;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.cart-item img{
+    width:70px;
+    height:70px;
+    border-radius:10px;
+    object-fit:cover;
+}
+
+.cart-item-name{
+    color:#fff;
+    font-size:.76rem;
+    font-weight:800;
+}
+
+.cart-item-price{
+    margin-top:7px;
+    color:#999;
+    font-size:.67rem;
+}
+
+.cart-remove{
+    width:32px;
+    height:32px;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:8px;
+    background:#181818;
+    color:#fff;
+}
+
+.cart-quantity{
+    display:flex;
+    width:max-content;
+    margin-top:9px;
+    align-items:center;
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:8px;
+    overflow:hidden;
+    background:#171717;
+}
+
+.cart-quantity button{
+    width:28px;
+    height:28px;
+    border:0;
+    background:rgba(255,255,255,.07);
+    color:#fff;
+    font-weight:900;
+}
+
+.cart-quantity span{
+    width:35px;
+    text-align:center;
+    color:#fff;
+    font-size:.7rem;
+    font-weight:800;
+}
+
+.cart-footer{
+    padding:22px;
+    border-top:1px solid rgba(255,255,255,.08);
+}
+
+.cart-total{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:15px;
+    font-weight:800;
+}
+
+.checkout{
+    width:100%;
+}
+
+/* =========================================================
+   PRODUCT MODAL
+========================================================= */
+
+.product-modal{
+    position:fixed;
+    inset:0;
+    z-index:16000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    visibility:hidden;
+    transition:.25s;
+}
+
+.product-modal.active{
+    opacity:1;
+    visibility:visible;
+}
+
+.product-modal-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.78);
+    backdrop-filter:blur(10px);
+}
+
+.product-modal-box{
+    position:relative;
+    z-index:2;
+    width:min(1050px,92%);
+    max-height:92vh;
+    overflow:auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    background:#fff;
+    color:#111;
+    border-radius:22px;
+    box-shadow:0 40px 120px rgba(0,0,0,.6);
+}
+
+.product-modal-close{
+    position:absolute;
+    right:18px;
+    top:18px;
+    z-index:5;
+    width:40px;
+    height:40px;
+    border:0;
+    border-radius:50%;
+    background:rgba(0,0,0,.7);
+    color:#fff;
+    font-size:1.5rem;
+}
+
+.product-modal-image-wrap{
+    min-height:560px;
+    padding:30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#111;
+}
+
+.product-modal-image-wrap img{
+    width:100%;
+    height:500px;
+    object-fit:cover;
+    border-radius:14px;
+}
+
+.product-modal-content{
+    padding:55px 40px 40px;
+}
+
+.modal-category{
+    color:var(--red);
+    font-size:.62rem;
+    font-weight:900;
+    letter-spacing:.15em;
+}
+
+.product-modal-content h2{
+    margin-top:10px;
+    font-family:"Space Grotesk";
+    font-size:2.3rem;
+    line-height:1;
+}
+
+.modal-rating{
+    display:flex;
+    gap:9px;
+    align-items:center;
+    margin-top:15px;
+    color:#777;
+    font-size:.72rem;
+}
+
+.stars{
+    color:#111;
+}
+
+.modal-price{
+    margin-top:22px;
+    font-family:"Space Grotesk";
+    font-size:1.7rem;
+    font-weight:900;
+}
+
+.modal-description{
+    margin-top:18px;
+    color:#666;
+    font-size:.8rem;
+    line-height:1.8;
+}
+
+.aura-dynamic-options{
+    margin:25px 0 10px;
+}
+
+.aura-modal-option{
+    margin-bottom:20px;
+}
+
+.aura-option-title,
+.modal-option-title{
+    margin-bottom:9px;
+    color:#777;
+    font-size:.6rem;
+    font-weight:900;
+    letter-spacing:.12em;
+}
+
+.aura-colour-list,
+.aura-size-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.aura-colour-choice,
+.aura-size-choice{
+    padding:9px 12px;
+    border-radius:9px;
+    border:1px solid #ddd;
+    background:#f5f5f5;
+    color:#111;
+    font-size:.65rem;
+    font-weight:800;
+}
+
+.aura-colour-choice.active,
+.aura-size-choice.active{
+    background:var(--red);
+    border-color:var(--red);
+    color:#fff;
+}
+
+.aura-custom-toggle{
+    width:100%;
+    padding:13px;
+    display:flex;
+    justify-content:space-between;
+    border-radius:11px;
+    border:1px solid #ddd;
+    background:#f5f5f5;
+    color:#111;
+    font-size:.7rem;
+    font-weight:800;
+}
+
+.aura-custom-toggle.active{
+    background:var(--red);
+    border-color:var(--red);
+    color:#fff;
+}
+
+.modal-option{
+    margin-top:20px;
+}
+
+.quantity-control{
+    width:max-content;
+    display:flex;
+    align-items:center;
+    border:1px solid rgba(0,0,0,.18);
+    border-radius:11px;
+    overflow:hidden;
+    background:#171717;
+}
+
+.quantity-control button{
+    width:44px;
+    height:42px;
+    border:0;
+    background:#222;
+    color:#fff;
+    font-size:1.15rem;
+    font-weight:700;
+}
+
+.quantity-control button:hover{
+    background:var(--red);
+}
+
+.quantity-control span{
+    width:48px;
+    text-align:center;
+    color:#fff;
+    background:#171717;
+    font-size:.9rem;
+    font-weight:900;
+}
+
+.modal-add-cart{
+    width:100%;
+    margin-top:22px;
+    height:50px;
+    border:0;
+    border-radius:11px;
+    background:var(--red);
+    color:#fff;
+    font-size:.68rem;
+    font-weight:900;
+    letter-spacing:.08em;
+}
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+.auth-modal,
+.checkout-modal{
+    position:fixed;
+    inset:0;
+    z-index:17000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    visibility:hidden;
+    transition:.25s;
+}
+
+.auth-modal.active,
+.checkout-modal.active{
+    opacity:1;
+    visibility:visible;
+}
+
+.auth-backdrop,
+.checkout-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.78);
+    backdrop-filter:blur(12px);
+}
+
+.auth-box{
+    position:relative;
+    z-index:2;
+    width:min(460px,92%);
+    max-height:92vh;
+    overflow:auto;
+    padding:40px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:22px;
+    background:#111;
+    box-shadow:var(--shadow);
+}
+
+.auth-close,
+.checkout-close{
+    position:absolute;
+    top:17px;
+    right:17px;
+    width:38px;
+    height:38px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:10px;
+    background:#1a1a1a;
+    color:#fff;
+    font-size:1.4rem;
+}
+
+.auth-logo{
+    font-family:"Space Grotesk";
+    font-weight:900;
+    letter-spacing:.12em;
+}
+
+.auth-logo span{
+    color:var(--red);
+}
+
+.auth-title{
+    margin-top:25px;
+    font-family:"Space Grotesk";
+    font-size:2rem;
+}
+
+.auth-subtitle{
+    margin-top:8px;
+    color:#777;
+    font-size:.75rem;
+    line-height:1.7;
+}
+
+.auth-form-group{
+    margin-top:17px;
+}
+
+.auth-form-group label{
+    display:block;
+    margin-bottom:7px;
+    color:#aaa;
+    font-size:.62rem;
+    font-weight:800;
+}
+
+.auth-form-group input{
+    width:100%;
+    height:45px;
+    padding:0 13px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:10px;
+    outline:0;
+    background:#181818;
+    color:#fff;
+}
+
+.auth-submit{
+    width:100%;
+    height:48px;
+    margin-top:22px;
+    border:0;
+    border-radius:10px;
+    background:var(--red);
+    color:#fff;
+    font-size:.68rem;
+    font-weight:900;
+}
+
+.auth-switch{
+    margin-top:18px;
+    text-align:center;
+    color:#777;
+    font-size:.7rem;
+}
+
+.auth-switch button{
+    border:0;
+    background:none;
+    color:var(--red);
+    font-weight:800;
+}
+
+.auth-error,
+.auth-success{
+    display:none;
+    margin-top:15px;
+    padding:10px;
+    border-radius:9px;
+    font-size:.67rem;
+}
+
+.auth-error{
+    color:#ff647d;
+    background:rgba(217,4,41,.08);
+}
+
+.auth-success{
+    color:#8cffc1;
+    background:rgba(100,255,180,.07);
+}
+
+.google-login-btn{
+    width:100%;
+    height:46px;
+    margin-top:12px;
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:10px;
+    background:#fff;
+    color:#111;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    font-size:.7rem;
+    font-weight:800;
+}
+
+.google-login-btn span{
+    font-size:1.05rem;
+    font-weight:900;
+}
+
+.auth-divider{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:17px 0;
+    color:#555;
+    font-size:.58rem;
+}
+
+.auth-divider:before,
+.auth-divider:after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:rgba(255,255,255,.1);
+}
+
+/* =========================================================
+   CHECKOUT
+========================================================= */
+
+.checkout-box{
+    position:relative;
+    z-index:2;
+    width:min(950px,94%);
+    max-height:92vh;
+    overflow:auto;
+    display:grid;
+    grid-template-columns:330px 1fr;
+    background:#111;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:22px;
+    box-shadow:var(--shadow);
+}
+
+.checkout-product{
+    padding:30px;
+    background:#171717;
+}
+
+.checkout-product img{
+    width:100%;
+    height:300px;
+    border-radius:15px;
+    object-fit:cover;
+}
+
+.checkout-product h3{
+    margin-top:18px;
+    font-family:"Space Grotesk";
+    font-size:1.2rem;
+}
+
+.checkout-product-price{
+    margin-top:10px;
+    color:var(--red);
+    font-size:1.2rem;
+    font-weight:900;
+}
+
+.checkout-form{
+    padding:45px;
+}
+
+.checkout-form h2{
+    font-family:"Space Grotesk";
+    font-size:2rem;
+}
+
+.checkout-note{
+    margin-top:8px;
+    color:#777;
+    font-size:.7rem;
+    line-height:1.7;
+}
+
+.checkout-group{
+    margin-top:16px;
+}
+
+.checkout-group label{
+    display:block;
+    margin-bottom:7px;
+    color:#aaa;
+    font-size:.6rem;
+    font-weight:800;
+}
+
+.checkout-group input,
+.checkout-group textarea,
+.checkout-group select{
+    width:100%;
+    min-height:44px;
+    padding:11px 12px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:9px;
+    outline:0;
+    background:#181818;
+    color:#fff;
+}
+
+.checkout-group textarea{
+    min-height:90px;
+    resize:vertical;
+}
+
+.checkout-submit{
+    width:100%;
+    height:48px;
+    margin-top:20px;
+    border:0;
+    border-radius:10px;
+    background:var(--red);
+    color:#fff;
+    font-size:.68rem;
+    font-weight:900;
+}
+
+/* =========================================================
+   PAYMENT SUCCESS
+========================================================= */
+
+.payment-success-page{
+    position:fixed;
+    inset:0;
+    z-index:25000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:#080808;
+}
+
+.payment-success-box{
+    width:min(580px,100%);
+    padding:50px;
+    text-align:center;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:24px;
+    background:#111;
+}
+
+.success-icon{
+    width:65px;
+    height:65px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#8cffc1;
+    color:#07150d;
+    font-size:2rem;
+    font-weight:900;
+}
+
+.success-label{
+    margin-top:20px;
+    color:#8cffc1;
+    font-size:.62rem;
+    font-weight:900;
+    letter-spacing:.15em;
+}
+
+.payment-success-box h1{
+    margin-top:10px;
+    font-family:"Space Grotesk";
+    font-size:3rem;
+}
+
+.payment-success-box>p{
+    margin-top:12px;
+    color:#777;
+    font-size:.78rem;
+    line-height:1.8;
+}
+
+.success-order-card{
+    margin:25px 0;
+    padding:18px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    border-radius:14px;
+    background:#181818;
+}
+
+.success-order-card span{
+    display:block;
+    color:#666;
+    font-size:.55rem;
+    font-weight:800;
+}
+
+.success-order-card strong{
+    display:block;
+    margin-top:7px;
+    color:#fff;
+    font-size:.75rem;
+    word-break:break-word;
+}
+
+/* =========================================================
+   LEGAL MODALS
+========================================================= */
+
+.legal-modal{
+    position:fixed;
+    inset:0;
+    z-index:18000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.legal-modal.active{
+    display:flex;
+}
+
+.legal-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.8);
+    backdrop-filter:blur(10px);
+}
+
+.legal-box{
+    position:relative;
+    z-index:2;
+    width:min(850px,95%);
+    max-height:88vh;
+    overflow:auto;
+    padding:40px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:20px;
+    background:#111;
+    box-shadow:var(--shadow);
+}
+
+.legal-close{
+    position:absolute;
+    top:15px;
+    right:15px;
+    width:38px;
+    height:38px;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:9px;
+    background:#191919;
+    color:#fff;
+    font-size:1.3rem;
+}
+
+.legal-box h2{
+    font-family:"Space Grotesk";
+    font-size:2.2rem;
+}
+
+.legal-box h3{
+    margin-top:28px;
+    color:#fff;
+    font-size:1rem;
+}
+
+.legal-box p,
+.legal-box li{
+    margin-top:10px;
+    color:#999;
+    font-size:.76rem;
+    line-height:1.9;
+}
+
+.legal-box ul{
+    padding-left:20px;
+}
+
+/* =========================================================
+   ADMIN ACCESS MESSAGE
+========================================================= */
+
+.admin-access{
+    display:none;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:800px){
+
+    .navbar{
+        width:94%;
+        height:58px;
+    }
+
+    .nav-links,
+    .nav-actions{
+        display:none;
+    }
+
+    .mobile-menu-btn{
+        display:flex;
+    }
+
+    .hero{
+        min-height:750px;
+    }
+
+    .hero-container{
+        min-height:750px;
+    }
+
+    .hero-content{
+        left:6%;
+        top:48%;
+        width:88%;
+    }
+
+    .hero-title{
+        font-size:clamp(3.2rem,13vw,5rem);
+    }
+
+    .hero-description{
+        font-size:.82rem;
+    }
+
+    .diamond-stage{
+        right:-180px;
+        opacity:.22;
+        transform:translateY(-50%) scale(.65);
+    }
+
+    .aura-products-grid{
+        grid-template-columns:1fr;
+    }
+
+    .studio{
+        grid-template-columns:1fr;
+    }
+
+    .footer-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .product-modal-box{
+        grid-template-columns:1fr;
+        max-height:94vh;
+    }
+
+    .product-modal-image-wrap{
+        min-height:auto;
+        padding:15px;
+    }
+
+    .product-modal-image-wrap img{
+        height:320px;
+    }
+
+    .product-modal-content{
+        padding:25px;
+    }
+
+    .checkout-box{
+        grid-template-columns:1fr;
+    }
+
+    .checkout-product img{
+        height:250px;
+    }
+
+}
+
+@media(max-width:500px){
+
+    .auth-box{
+        padding:28px 22px;
+    }
+
+    .hero-buttons{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .btn{
+        width:190px;
+    }
+
+    .footer-grid{
+        grid-template-columns:1fr;
+    }
+
+    .footer-bottom{
+        flex-direction:column;
+        gap:10px;
+    }
+
+    .aura-product-bottom{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .aura-buttons{
+        width:100%;
+    }
+
+    .aura-cart-btn,
+    .aura-buy-btn{
+        flex:1;
+    }
+
+    .studio-actions{
+        flex-direction:column;
+    }
+
+    .success-order-card{
+        grid-template-columns:1fr;
+    }
+
+    .payment-success-box{
+        padding:30px 20px;
+    }
+
+}
+/* REMOVE HERO DIAMOND */
+.diamond-stage {
+    display: none !important;
+}
+</style>
+</head>
+
+<body>
+
+<!-- =======================================================
+     NAVBAR
+======================================================= -->
+
+<header class="navbar">
+
+    <a href="#home" class="logo">
+        AURA<span>POD</span>
+    </a>
+
+    <nav class="nav-links">
+
+        <a href="#home">Home</a>
+        <a href="#catalog">Products</a>
+        <a href="#studio">Studio</a>
+        <a href="#about">About</a>
+
+    </nav>
+
+    <button
+        class="mobile-menu-btn"
+        onclick="toggleMobileMenu()"
+        aria-label="Open menu">
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </button>
+
+    <div
+        class="mobile-menu-overlay"
+        id="mobileMenuOverlay"
+        onclick="closeMobileMenu(event)">
+
+        <div class="mobile-menu-panel">
+
+            <button
+                class="mobile-menu-close"
+                onclick="closeMobileMenu()">
+
+                ×
+
+            </button>
+
+            <div class="mobile-menu-logo">
+                AURA <span>POD</span>
+            </div>
+
+            <a href="#home" onclick="closeMobileMenu()">HOME</a>
+            <a href="#catalog" onclick="closeMobileMenu()">PRODUCTS</a>
+            <a href="#studio" onclick="closeMobileMenu()">STUDIO</a>
+            <a href="#about" onclick="closeMobileMenu()">ABOUT</a>
+
+            <div class="mobile-menu-divider"></div>
+
+            <button
+                class="mobile-menu-action"
+                onclick="closeMobileMenu();openAuthModal()">
+
+                LOGIN / REGISTER
+
+            </button>
+
+            <button
+                class="mobile-menu-action"
+                onclick="closeMobileMenu();openCart()">
+
+                CART
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="nav-actions">
+
+        <button
+            class="auth-nav-btn"
+            id="authNavButton"
+            onclick="openAuthModal()">
+
+            LOGIN
+
+        </button>
+
+        <button
+            class="nav-icon"
+            onclick="toggleCart()"
+            aria-label="Cart">
+
+            🛒
+
+            <span
+                class="cart-count"
+                id="cartCount">
+
+                0
+
+            </span>
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =======================================================
+     HERO
+======================================================= -->
+
+<section class="hero" id="home">
+
+    <img
+        class="hero-background"
+        src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=2400&q=95"
+        alt="Premium red fashion studio">
+
+    <div class="hero-overlay"></div>
+    <div class="hero-red-light"></div>
+
+    <div class="hero-container">
+
+        <div class="hero-content">
+
+            <div class="hero-label">
+
+                <span class="hero-label-dot"></span>
+
+                Next Generation Print On Demand
+
+            </div>
+
+            <h1 class="hero-title">
+
+                WEAR
+
+                <span class="red">
+                    YOUR
+                </span>
+
+                <br>
+
+                <span class="outline">
+                    VISION.
+                </span>
+
+            </h1>
+
+            <p class="hero-description">
+
+                Transform your ideas into premium physical products.
+                Create bold designs, customize every detail and
+                bring your vision to life with next-generation
+                print-on-demand technology.
+
+            </p>
+
+            <div class="hero-buttons">
+
+                <button
+                    class="btn btn-red"
+                    onclick="scrollToSection('catalog')">
+
+                    Explore Catalogue
+
+                </button>
+
+                <button
+                    class="btn btn-outline"
+                    onclick="scrollToSection('studio')">
+
+                    Launch Studio
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+   
+
+</section>
+
+
+<!-- =======================================================
+     CATALOGUE
+======================================================= -->
+
+<section class="section" id="catalog">
+
+    <div class="section-header">
+
+        <div class="section-label">
+            PREMIUM CATALOGUE
+        </div>
+
+        <h2 class="section-title">
+            CHOOSE<br>YOUR AURA.
+        </h2>
+
+    </div>
+
+    <!-- Firebase products appear here -->
+
+    <div
+        class="aura-products-grid"
+        id="auraProductsGrid">
+
+        <div style="
+            grid-column:1/-1;
+            text-align:center;
+            padding:80px 20px;
+            color:#777;
+        ">
+
+            Loading products...
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     STUDIO
+======================================================= -->
+
+<section class="section" id="studio">
+
+    <div class="studio">
+
+        <div class="studio-preview">
+
+            <div class="custom-product-preview">
+
+                <img
+                    id="customBaseProduct"
+                    src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1000&q=90"
+                    alt="Custom Product">
+
+                <div
+                    class="custom-design-layer"
+                    id="customDesignLayer">
+
+                    <img
+                        id="customUploadedImage"
+                        src=""
+                        alt=""
+                        style="display:none;">
+
+                    <div id="customDesignText">
+                        YOUR AURA
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="studio-copy">
+
+            <div class="section-label">
+                CREATIVE ENGINE
+            </div>
+
+            <h2>
+                BUILD<br>
+                YOUR<br>
+                <span style="color:#d90429">
+                    AURA.
+                </span>
+            </h2>
+
+            <p>
+
+                Create products that feel completely yours.
+                Add your own artwork, write custom text and
+                build your product before bringing it to life.
+
+            </p>
+
+            <div class="custom-studio-panel">
+
+                <div class="studio-control">
+
+                    <label>PRODUCT</label>
+
+                    <select
+                        id="customProductType"
+                        onchange="changeCustomProduct()">
+
+                        <option value="tshirt">
+                            Premium T-Shirt
+                        </option>
+
+                        <option value="hoodie">
+                            Premium Hoodie
+                        </option>
+
+                        <option value="cap">
+                            Premium Cap
+                        </option>
+
+                        <option value="bag">
+                            Premium Tote Bag
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="studio-control">
+
+                    <label>CUSTOM TEXT</label>
+
+                    <input
+                        type="text"
+                        id="customDesignInput"
+                        placeholder="Enter your design text"
+                        maxlength="40"
+                        oninput="updateCustomText()">
+
+                </div>
+
+                <div class="studio-control">
+
+                    <label>TEXT COLOR</label>
+
+                    <div class="studio-color-row">
+
+                        <button
+                            type="button"
+                            class="studio-color black"
+                            onclick="setCustomTextColor('#000000')">
+                        </button>
+
+                        <button
+                            type="button"
+                            class="studio-color white"
+                            onclick="setCustomTextColor('#ffffff')">
+                        </button>
+
+                        <button
+                            type="button"
+                            class="studio-color red"
+                            onclick="setCustomTextColor('#d90429')">
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="studio-control">
+
+                    <label>UPLOAD DESIGN</label>
+
+                    <input
+                        type="file"
+                        id="customDesignImage"
+                        accept="image/png,image/jpeg,image/webp"
+                        onchange="uploadCustomDesignPreview(event)">
+
+                </div>
+
+                <div class="studio-control">
+
+                    <label>QUANTITY</label>
+
+                    <div class="studio-quantity">
+
+                        <button
+                            type="button"
+                            onclick="changeCustomQuantity(-1)">
+                            −
+                        </button>
+
+                        <span id="customQuantity">
+                            1
+                        </span>
+
+                        <button
+                            type="button"
+                            onclick="changeCustomQuantity(1)">
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="studio-actions">
+
+                    <button
+                        class="btn btn-red"
+                        type="button"
+                        onclick="saveCustomDesign()">
+
+                        SAVE DESIGN
+
+                    </button>
+
+                    <button
+                        class="btn btn-outline"
+                        type="button"
+                        onclick="addCustomDesignToCart()">
+
+                        ADD TO CART
+
+                    </button>
+
+                </div>
+
+                <div
+                    id="studioMessage"
+                    class="studio-message">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     ABOUT
+======================================================= -->
+
+<section
+    class="section section-light"
+    id="about">
+
+    <div class="section-header">
+
+        <div class="section-label">
+            ABOUT AURA POD
+        </div>
+
+        <h2 class="section-title">
+            Ideas Into<br>
+            Objects.
+        </h2>
+
+    </div>
+
+    <p class="about-text">
+
+        AURA POD is a premium print-on-demand platform built
+        around creative freedom, high-quality products and
+        modern digital design. We give creators the ability
+        to transform original ideas into products that people
+        can actually wear, use and display.
+
+        <br><br>
+
+        From premium apparel and accessories to custom artwork,
+        AURA POD is designed to make the journey from concept
+        to finished product feel simple, visual and effortless.
+
+    </p>
+
+</section>
+
+
+<!-- =======================================================
+     FOOTER
+======================================================= -->
+
+<footer>
+
+    <div class="footer-grid">
+
+        <div class="footer-brand">
+
+            <div class="logo">
+                AURA<span>POD</span>
+            </div>
+
+            <p>
+                Premium print-on-demand products built
+                around your ideas.
+            </p>
+
+        </div>
+
+        <div>
+
+            <div class="footer-title">
+                EXPLORE
+            </div>
+
+            <a href="#home">Home</a>
+            <a href="#catalog">Catalogue</a>
+            <a href="#studio">Studio</a>
+
+        </div>
+
+        <div>
+
+            <div class="footer-title">
+                COMPANY
+            </div>
+
+            <a href="#about">About</a>
+
+            <a href="javascript:void(0)"
+               onclick="openLegal('privacy')">
+                Privacy Policy
+            </a>
+
+            <a href="javascript:void(0)"
+               onclick="openLegal('terms')">
+                Terms & Conditions
+            </a>
+
+        </div>
+
+        <div>
+
+            <div class="footer-title">
+                CONNECT
+            </div>
+
+            <a href="mailto:hello@aurapod.com">
+                Contact
+            </a>
+
+            <a href="#">
+                Instagram
+            </a>
+
+            <a href="#">
+                Pinterest
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        <span>
+            © 2026 AURA POD. All rights reserved.
+        </span>
+
+        <span>
+            Premium Print On Demand
+        </span>
+
+    </div>
+
+</footer>
+
+
+<!-- =======================================================
+     CART
+======================================================= -->
+
+<div
+    class="cart-overlay"
+    id="cartOverlay"
+    onclick="toggleCart()">
+</div>
+
+<aside
+    class="cart"
+    id="cart">
+
+    <div class="cart-header">
+
+        <h3>
+            Your Cart
+        </h3>
+
+        <button
+            class="close-cart"
+            onclick="toggleCart()">
+
+            ×
+
+        </button>
+
+    </div>
+
+    <div
+        class="cart-items"
+        id="cartItems">
+
+        <div class="empty-cart">
+            Your cart is empty.
+        </div>
+
+    </div>
+
+    <div class="cart-footer">
+
+        <div class="cart-total">
+
+            <span>Total</span>
+
+            <span id="cartTotal">
+                $0.00
+            </span>
+
+        </div>
+
+        <button
+            class="btn btn-red checkout"
+            onclick="checkout()">
+
+            CHECKOUT
+
+        </button>
+
+    </div>
+
+</aside>
+
+
+<!-- =======================================================
+     PRODUCT MODAL
+======================================================= -->
+
+<div
+    class="product-modal"
+    id="productModal">
+
+    <div
+        class="product-modal-backdrop"
+        onclick="closeProductDetail()">
+    </div>
+
+    <div class="product-modal-box">
+
+        <button
+            class="product-modal-close"
+            onclick="closeProductDetail()">
+
+            ×
+
+        </button>
+
+        <div class="product-modal-image-wrap">
+
+            <img
+                id="modalProductImage"
+                src=""
+                alt="Product">
+
+        </div>
+
+        <div class="product-modal-content">
+
+            <div
+                class="modal-category"
+                id="modalProductCategory">
+                PRODUCT
+            </div>
+
+            <h2 id="modalProductName">
+                Product Name
+            </h2>
+
+            <div class="modal-rating">
+
+                <span class="stars">
+                    ★★★★★
+                </span>
+
+                <span id="modalProductRating">
+                    0
+                </span>
+
+                <span
+                    class="review-count"
+                    id="modalProductReviews">
+
+                    (0 reviews)
+
+                </span>
+
+            </div>
+
+            <div
+                class="modal-price"
+                id="modalProductPrice">
+
+                $0.00
+
+            </div>
+
+            <p
+                class="modal-description"
+                id="modalProductDescription">
+
+                Premium quality AURA POD product.
+
+            </p>
+
+            <div class="modal-option">
+
+                <div class="modal-option-title">
+                    Quantity
+                </div>
+
+                <div class="quantity-control">
+
+                    <button
+                        onclick="changeProductQuantity(-1)">
+                        −
+                    </button>
+
+                    <span id="productQuantity">
+                        1
+                    </span>
+
+                    <button
+                        onclick="changeProductQuantity(1)">
+                        +
+                    </button>
+
+                </div>
+
+            </div>
+
+            <button
+                class="modal-add-cart"
+                onclick="addCurrentProductToCart()">
+
+                ADD TO CART
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =======================================================
+     AUTH MODAL
+======================================================= -->
+
+<div
+    class="auth-modal"
+    id="authModal">
+
+    <div
+        class="auth-backdrop"
+        onclick="closeAuthModal()">
+    </div>
+
+    <div class="auth-box">
+
+        <button
+            class="auth-close"
+            onclick="closeAuthModal()">
+
+            ×
+
+        </button>
+
+        <div class="auth-logo">
+            AURA<span>POD</span>
+        </div>
+
+        <div id="loginForm">
+
+            <h2 class="auth-title">
+                Welcome Back.
+            </h2>
+
+            <p class="auth-subtitle">
+                Sign in to your AURA POD account
+                and continue creating.
+            </p>
+
+            <div
+                class="auth-error"
+                id="loginError">
+            </div>
+
+            <div class="auth-form-group">
+
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="you@example.com"
+                    autocomplete="email">
+
+            </div>
+
+            <div class="auth-form-group">
+
+                <label>Password</label>
+
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Enter your password"
+                    autocomplete="current-password">
+
+            </div>
+
+            <button
+                class="auth-submit"
+                onclick="loginUser()">
+
+                LOGIN
+
+            </button>
+
+            <div class="auth-divider">
+                OR
+            </div>
+
+            <button
+                class="google-login-btn"
+                onclick="loginWithGoogle()">
+
+                <span>G</span>
+
+                Continue with Google
+
+            </button>
+
+            <div class="auth-switch">
+
+                Don't have an account?
+
+                <button onclick="showRegister()">
+                    Create one
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="registerForm"
+            style="display:none;">
+
+            <h2 class="auth-title">
+                Create Account.
+            </h2>
+
+            <p class="auth-subtitle">
+                Join AURA POD and start bringing
+                your ideas to life.
+            </p>
+
+            <div
+                class="auth-error"
+                id="registerError">
+            </div>
+
+            <div
+                class="auth-success"
+                id="registerSuccess">
+            </div>
+
+            <div class="auth-form-group">
+
+                <label>Full Name</label>
+
+                <input
+                    type="text"
+                    id="registerName"
+                    placeholder="Your name"
+                    autocomplete="name">
+
+            </div>
+
+            <div class="auth-form-group">
+
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    id="registerEmail"
+                    placeholder="you@example.com"
+                    autocomplete="email">
+
+            </div>
+
+            <div class="auth-form-group">
+
+                <label>Password</label>
+
+                <input
+                    type="password"
+                    id="registerPassword"
+                    placeholder="Minimum 6 characters"
+                    autocomplete="new-password">
+
+            </div>
+
+            <button
+                class="auth-submit"
+                onclick="registerUser()">
+
+                CREATE ACCOUNT
+
+            </button>
+
+            <div class="auth-divider">
+                OR
+            </div>
+
+            <button
+                class="google-login-btn"
+                onclick="loginWithGoogle()">
+
+                <span>G</span>
+
+                Continue with Google
+
+            </button>
+
+            <div class="auth-switch">
+
+                Already have an account?
+
+                <button onclick="showLogin()">
+                    Login
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =======================================================
+     CHECKOUT
+======================================================= -->
+
+<div
+    class="checkout-modal"
+    id="auraCheckoutModal">
+
+    <div
+        class="checkout-backdrop"
+        onclick="closeAuraCheckout()">
+    </div>
+
+    <div class="checkout-box">
+
+        <button
+            class="checkout-close"
+            onclick="closeAuraCheckout()">
+
+            ×
+
+        </button>
+
+        <div class="checkout-product">
+
+            <img
+                id="auraCheckoutImage"
+                src=""
+                alt="Checkout product">
+
+            <h3 id="auraCheckoutName">
+                Product
+            </h3>
+
+            <div
+                class="checkout-product-price"
+                id="auraCheckoutPrice">
+
+                $0.00
+
+            </div>
+
+            <p style="
+                margin-top:10px;
+                color:#aaa;
+                font-size:.75rem;
+            ">
+
+                Quantity:
+                <span id="auraCheckoutQuantity">
+                    1
+                </span>
+
+            </p>
+
+        </div>
+
+        <div class="checkout-form">
+
+            <h2>
+                Checkout
+            </h2>
+
+            <p class="checkout-note">
+
+                Enter your delivery details below.
+                Your order will be saved securely to AURA POD.
+
+            </p>
+
+            <div class="checkout-group">
+
+                <label>Full Name</label>
+
+                <input
+                    type="text"
+                    id="auraCustomerName"
+                    placeholder="Your full name">
+
+            </div>
+
+            <div class="checkout-group">
+
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    id="auraCustomerEmail"
+                    placeholder="you@example.com">
+
+            </div>
+
+            <div class="checkout-group">
+
+                <label>Phone</label>
+
+                <input
+                    type="tel"
+                    id="auraCustomerPhone"
+                    placeholder="Phone number">
+
+            </div>
+
+            <div class="checkout-group">
+
+                <label>Shipping Address</label>
+
+                <textarea
+                    id="auraCustomerAddress"
+                    placeholder="Your complete shipping address"></textarea>
+
+            </div>
+
+            <div class="checkout-group">
+
+                <label>Payment Method</label>
+
+                <select id="auraPaymentMethod">
+
+                    <option value="Cash on Delivery">
+                        Cash on Delivery
+                    </option>
+
+                    <option value="eSewa">
+                        eSewa
+                    </option>
+
+                    <option value="Khalti">
+                        Khalti
+                    </option>
+
+                    <option value="Card Payment">
+                        Card Payment
+                    </option>
+
+                </select>
+
+            </div>
+
+            <button
+                class="checkout-submit"
+                onclick="auraPlaceOrder()">
+
+                PLACE ORDER
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =======================================================
+     PAYMENT SUCCESS
+======================================================= -->
+
+<div
+    class="payment-success-page"
+    id="paymentSuccessPage">
+
+    <div class="payment-success-box">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <div class="success-label">
+            ORDER RECEIVED
+        </div>
+
+        <h1>
+            Thank You.
+        </h1>
+
+        <p>
+            Your AURA POD order has been successfully received.
+            We'll begin processing it shortly.
+        </p>
+
+        <div class="success-order-card">
+
+            <div>
+
+                <span>ORDER ID</span>
+
+                <strong id="successOrderId">
+                    —
+                </strong>
+
+            </div>
+
+            <div>
+
+                <span>AMOUNT</span>
+
+                <strong id="successOrderAmount">
+                    $0.00
+                </strong>
+
+            </div>
+
+            <div>
+
+                <span>PAYMENT</span>
+
+                <strong id="successPaymentMethod">
+                    —
+                </strong>
+
+            </div>
+
+        </div>
+
+        <button
+            class="btn btn-red"
+            onclick="closePaymentSuccess()">
+
+            CONTINUE SHOPPING
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =======================================================
+     PRIVACY POLICY
+======================================================= -->
+
+<div
+    class="legal-modal"
+    id="privacyModal">
+
+    <div
+        class="legal-backdrop"
+        onclick="closeLegal('privacy')">
+    </div>
+
+    <div class="legal-box">
+
+        <button
+            class="legal-close"
+            onclick="closeLegal('privacy')">
+
+            ×
+
+        </button>
+
+        <h2>
+            Privacy Policy
+        </h2>
+
+        <p>
+            AURA POD respects your privacy and is committed to
+            protecting the information you provide while using
+            our platform.
+        </p>
+
+        <h3>
+            Information We Collect
+        </h3>
+
+        <p>
+            When you create an account or place an order, we may
+            collect your name, email address, phone number,
+            shipping address, account information and order details.
+        </p>
+
+        <h3>
+            How We Use Information
+        </h3>
+
+        <p>
+            Information is used to manage accounts, process orders,
+            provide customer support, manage custom designs and
+            improve the AURA POD service.
+        </p>
+
+        <h3>
+            Payments
+        </h3>
+
+        <p>
+            AURA POD does not store card numbers, CVV codes or
+            other sensitive card credentials in the Firebase database.
+            Payment information should be handled by the appropriate
+            payment provider.
+        </p>
+
+        <h3>
+            Account Security
+        </h3>
+
+        <p>
+            Authentication is handled through Firebase Authentication.
+            Access to customer information and administrative data is
+            restricted according to Firebase security rules.
+        </p>
+
+        <h3>
+            Contact
+        </h3>
+
+        <p>
+            For privacy questions, contact AURA POD through the
+            contact information provided on the website.
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- =======================================================
+     TERMS
+======================================================= -->
+
+<div
+    class="legal-modal"
+    id="termsModal">
+
+    <div
+        class="legal-backdrop"
+        onclick="closeLegal('terms')">
+    </div>
+
+    <div class="legal-box">
+
+        <button
+            class="legal-close"
+            onclick="closeLegal('terms')">
+
+            ×
+
+        </button>
+
+        <h2>
+            Terms & Conditions
+        </h2>
+
+        <p>
+            By using AURA POD, you agree to these terms and
+            conditions.
+        </p>
+
+        <h3>
+            Accounts
+        </h3>
+
+        <p>
+            Users are responsible for maintaining the security of
+            their account credentials and for activity performed
+            through their account.
+        </p>
+
+        <h3>
+            Orders
+        </h3>
+
+        <p>
+            Orders are submitted through the AURA POD checkout
+            system. Product availability, pricing and stock may
+            change based on information maintained by AURA POD.
+        </p>
+
+        <h3>
+            Custom Designs
+        </h3>
+
+        <p>
+            Customers are responsible for the content of designs
+            they upload or create. Users must not submit content
+            that infringes another person's intellectual property
+            or violates applicable laws.
+        </p>
+
+        <h3>
+            Payments
+        </h3>
+
+        <p>
+            Online payment methods require an appropriate payment
+            provider and successful provider confirmation before
+            an order should be treated as paid.
+        </p>
+
+        <h3>
+            Administration
+        </h3>
+
+        <p>
+            Administrative functions are restricted to authorized
+            AURA POD administrators. Customers do not receive
+            administrative privileges merely by signing in.
+        </p>
+
+        <h3>
+            Changes
+        </h3>
+
+        <p>
+            AURA POD may update these terms when necessary to
+            reflect changes to the service.
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyDIQZBF2WrHwheSQB8HYDLzT62H8N4vdok",
+
+    authDomain:
+        "aura-d58ca.firebaseapp.com",
+
+    databaseURL:
+        "https://aura-d58ca-default-rtdb.firebaseio.com/",
+
+    projectId:
+        "aura-d58ca",
+
+    storageBucket:
+        "aura-d58ca.firebasestorage.app",
+
+    messagingSenderId:
+        "727800191983",
+
+    appId:
+        "1:727800191983:web:e54529436d8b870997b41a",
+
+    measurementId:
+        "G-BHB8CBX0GB"
+
+};
+
+if(!firebase.apps.length){
+    firebase.initializeApp(firebaseConfig);
+}
+
+const db = firebase.database();
+const auth = firebase.auth();
+
+console.log("AURA POD Firebase connected");
+
+
+/* =========================================================
+   ADMIN CONFIGURATION
+========================================================= */
+
+/*
+   IMPORTANT:
+   Put your OWN Firebase Authentication UID here.
+
+   Example:
+   const ADMIN_UIDS = [
+       "abc123youruid"
+   ];
+*/
+
+const ADMIN_UIDS = [
+    "YOUR_ADMIN_FIREBASE_UID"
+];
+
+const ADMIN_PANEL_URL = "admin.html";
+
+
+function isAdminUser(user){
+
+    if(!user) return false;
+
+    return ADMIN_UIDS.includes(user.uid);
+
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+function openAuthModal(){
+
+    const modal =
+        document.getElementById("authModal");
+
+    if(!modal) return;
+
+    modal.classList.add("active");
+
+    document.body.classList.add("modal-open");
+
+    showLogin();
+
+}
+
+
+function closeAuthModal(){
+
+    const modal =
+        document.getElementById("authModal");
+
+    if(!modal) return;
+
+    modal.classList.remove("active");
+
+    document.body.classList.remove("modal-open");
+
+}
+
+
+function clearAuthMessages(){
+
+    [
+        "loginError",
+        "registerError",
+        "registerSuccess"
+    ].forEach(id => {
+
+        const element =
+            document.getElementById(id);
+
+        if(element){
+
+            element.style.display = "none";
+            element.textContent = "";
+
+        }
+
+    });
+
+}
+
+
+function showLogin(){
+
+    clearAuthMessages();
+
+    document.getElementById(
+        "loginForm"
+    ).style.display = "block";
+
+    document.getElementById(
+        "registerForm"
+    ).style.display = "none";
+
+}
+
+
+function showRegister(){
+
+    clearAuthMessages();
+
+    document.getElementById(
+        "loginForm"
+    ).style.display = "none";
+
+    document.getElementById(
+        "registerForm"
+    ).style.display = "block";
+
+}
+
+
+function getAuthErrorMessage(error){
+
+    switch(error.code){
+
+        case "auth/email-already-in-use":
+            return "This email is already registered.";
+
+        case "auth/invalid-email":
+            return "Please enter a valid email address.";
+
+        case "auth/weak-password":
+            return "Password is too weak.";
+
+        case "auth/user-not-found":
+            return "No account was found with this email.";
+
+        case "auth/wrong-password":
+        case "auth/invalid-credential":
+            return "Incorrect email or password.";
+
+        case "auth/too-many-requests":
+            return "Too many attempts. Please try again later.";
+
+        case "auth/network-request-failed":
+            return "Network error. Check your internet connection.";
+
+        case "auth/operation-not-allowed":
+            return "This login method is not enabled in Firebase.";
+
+        default:
+            return error.message ||
+                "Authentication failed.";
+
+    }
+
+}
+
+
+function loginUser(){
+
+    const email =
+        document.getElementById(
+            "loginEmail"
+        ).value.trim();
+
+    const password =
+        document.getElementById(
+            "loginPassword"
+        ).value;
+
+    const errorBox =
+        document.getElementById(
+            "loginError"
+        );
+
+    clearAuthMessages();
+
+    if(!email || !password){
+
+        errorBox.textContent =
+            "Please enter your email and password.";
+
+        errorBox.style.display = "block";
+
+        return;
+
+    }
+
+    auth.signInWithEmailAndPassword(
+        email,
+        password
+    )
+    .then(result => {
+
+        closeAuthModal();
+
+        saveCustomer(result.user);
+
+    })
+    .catch(error => {
+
+        errorBox.textContent =
+            getAuthErrorMessage(error);
+
+        errorBox.style.display = "block";
+
+    });
+
+}
+
+
+function loginWithGoogle(){
+
+    const provider =
+        new firebase.auth.GoogleAuthProvider();
+
+    provider.setCustomParameters({
+        prompt:"select_account"
+    });
+
+    auth.signInWithPopup(provider)
+
+        .then(result => {
+
+            saveCustomer(result.user);
+
+            closeAuthModal();
+
+        })
+
+        .catch(error => {
+
+            const box =
+                document.getElementById(
+                    "loginError"
+                );
+
+            box.textContent =
+                getAuthErrorMessage(error);
+
+            box.style.display = "block";
+
+        });
+
+}
+
+
+function registerUser(){
+
+    const name =
+        document.getElementById(
+            "registerName"
+        ).value.trim();
+
+    const email =
+        document.getElementById(
+            "registerEmail"
+        ).value.trim();
+
+    const password =
+        document.getElementById(
+            "registerPassword"
+        ).value;
+
+    const errorBox =
+        document.getElementById(
+            "registerError"
+        );
+
+    const successBox =
+        document.getElementById(
+            "registerSuccess"
+        );
+
+    clearAuthMessages();
+
+    if(!name){
+
+        errorBox.textContent =
+            "Please enter your full name.";
+
+        errorBox.style.display = "block";
+
+        return;
+
+    }
+
+    if(!email){
+
+        errorBox.textContent =
+            "Please enter your email.";
+
+        errorBox.style.display = "block";
+
+        return;
+
+    }
+
+    if(password.length < 6){
+
+        errorBox.textContent =
+            "Password must contain at least 6 characters.";
+
+        errorBox.style.display = "block";
+
+        return;
+
+    }
+
+    auth.createUserWithEmailAndPassword(
+        email,
+        password
+    )
+    .then(result => {
+
+        const user = result.user;
+
+        return user.updateProfile({
+            displayName:name
+        })
+        .then(() => saveCustomer(user));
+
+    })
+    .then(() => {
+
+        successBox.textContent =
+            "Account created successfully.";
+
+        successBox.style.display = "block";
+
+        setTimeout(() => {
+            closeAuthModal();
+        },900);
+
+    })
+    .catch(error => {
+
+        errorBox.textContent =
+            getAuthErrorMessage(error);
+
+        errorBox.style.display = "block";
+
+    });
+
+}
+
+
+async function saveCustomer(user){
+
+    if(!user) return;
+
+    try{
+
+        await db
+            .ref("customers/" + user.uid)
+            .update({
+
+                uid:user.uid,
+
+                name:
+                    user.displayName || "",
+
+                email:
+                    user.email || "",
+
+                photoURL:
+                    user.photoURL || "",
+
+                lastLoginAt:
+                    firebase.database.ServerValue.TIMESTAMP
+
+            });
+
+    }catch(error){
+
+        console.error(
+            "Customer save error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   AUTH UI / ADMIN PROTECTION
+========================================================= */
+
+auth.onAuthStateChanged(async function(user){
+
+    const button =
+        document.getElementById(
+            "authNavButton"
+        );
+
+    if(user){
+
+        await saveCustomer(user);
+
+        const name =
+            user.displayName ||
+            (user.email || "USER").split("@")[0];
+
+        if(button){
+
+            button.textContent =
+                name.substring(0,12);
+
+            button.onclick =
+                toggleUserDropdown;
+
+        }
+
+        createUserDropdown(user);
+
+        /*
+           If this storefront is ever opened with
+           ?admin=true, only the actual admin UID
+           is allowed through.
+        */
+
+        if(
+            new URLSearchParams(
+                window.location.search
+            ).get("admin") === "true"
+        ){
+
+            if(!isAdminUser(user)){
+
+                alert(
+                    "You are not authorized to access the admin panel."
+                );
+
+                window.location.href =
+                    ADMIN_PANEL_URL;
+
+            }
+
+        }
+
+    }else{
+
+        if(button){
+
+            button.textContent =
+                "LOGIN";
+
+            button.onclick =
+                openAuthModal;
+
+        }
+
+        removeUserDropdown();
+
+        if(
+            new URLSearchParams(
+                window.location.search
+            ).get("admin") === "true"
+        ){
+
+            window.location.href =
+                ADMIN_PANEL_URL;
+
+        }
+
+    }
+
+});
+
+
+function createUserDropdown(user){
+
+    removeUserDropdown();
+
+    const actions =
+        document.querySelector(
+            ".nav-actions"
+        );
+
+    if(!actions) return;
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.className =
+        "user-menu";
+
+    wrapper.id =
+        "userMenu";
+
+    const dropdown =
+        document.createElement("div");
+
+    dropdown.className =
+        "user-dropdown";
+
+    dropdown.id =
+        "userDropdown";
+
+    const adminButton =
+        isAdminUser(user)
+            ? `
+                <button
+                    onclick="openAdminPanel()"
+                    style="margin-top:8px;background:#222;">
+                    ADMIN PANEL
+                </button>
+              `
+            : "";
+
+    dropdown.innerHTML = `
+
+        <div class="user-dropdown-name">
+            ${escapeHtml(
+                user.displayName ||
+                "AURA POD Customer"
+            )}
+        </div>
+
+        <div class="user-dropdown-email">
+            ${escapeHtml(user.email || "")}
+        </div>
+
+        ${adminButton}
+
+        <button onclick="logoutUser()">
+            LOG OUT
+        </button>
+
+    `;
+
+    wrapper.appendChild(dropdown);
+
+    actions.insertBefore(
+        wrapper,
+        actions.querySelector(".nav-icon")
+    );
+
+}
+
+
+function openAdminPanel(){
+
+    if(!auth.currentUser){
+
+        openAuthModal();
+
+        return;
+
+    }
+
+    if(!isAdminUser(auth.currentUser)){
+
+        alert(
+            "You are not authorized to access the admin panel."
+        );
+
+        return;
+
+    }
+
+    window.location.href =
+        ADMIN_PANEL_URL;
+
+}
+
+
+function removeUserDropdown(){
+
+    const old =
+        document.getElementById(
+            "userMenu"
+        );
+
+    if(old){
+        old.remove();
+    }
+
+}
+
+
+function toggleUserDropdown(){
+
+    const dropdown =
+        document.getElementById(
+            "userDropdown"
+        );
+
+    if(dropdown){
+
+        dropdown.classList.toggle(
+            "active"
+        );
+
+    }
+
+}
+
+
+function logoutUser(){
+
+    auth.signOut()
+        .then(() => {
+
+            removeUserDropdown();
+
+        })
+        .catch(error => {
+
+            console.error(
+                "Logout error:",
+                error
+            );
+
+        });
+
+}
+
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================================
+   PRODUCTS FROM FIREBASE ONLY
+========================================================= */
+
+let auraProductData = [];
+
+let auraProductsLoaded = false;
+
+
+function normalizeFirebaseList(value){
+
+    if(Array.isArray(value)){
+        return value.filter(Boolean);
+    }
+
+    if(value && typeof value === "object"){
+        return Object.values(value);
+    }
+
+    return [];
+
+}
+
+
+async function loadAuraProducts(){
+
+    const grid =
+        document.getElementById(
+            "auraProductsGrid"
+        );
+
+    try{
+
+        const snapshot =
+            await db
+                .ref("products")
+                .once("value");
+
+        const data =
+            snapshot.val() || {};
+
+        auraProductData =
+            Object.entries(data)
+                .map(([id,product]) => {
+
+                    return {
+
+                        id,
+
+                        name:
+                            product.name ||
+                            "AURA POD Product",
+
+                        category:
+                            product.category ||
+                            "PRODUCT",
+
+                        price:
+                            Number(product.price || 0),
+
+                        custom:
+                            Number(
+                                product.customPrice ||
+                                product.custom ||
+                                0
+                            ),
+
+                        rating:
+                            String(
+                                product.rating || "0"
+                            ),
+
+                        reviews:
+                            String(
+                                product.reviews || "0"
+                            ),
+
+                        image:
+                            product.image || "",
+
+                        description:
+                            product.description ||
+                            "Premium AURA POD product.",
+
+                        colors:
+                            normalizeFirebaseList(
+                                product.colors
+                            ),
+
+                        sizes:
+                            normalizeFirebaseList(
+                                product.sizes
+                            ),
+
+                        stock:
+                            Number(
+                                product.stock ?? 0
+                            ),
+
+                        badge:
+                            product.badge || "",
+
+                        featured:
+                            Boolean(
+                                product.featured
+                            )
+
+                    };
+
+                })
+                .filter(product =>
+                    product.name &&
+                    product.image
+                );
+
+        auraProductsLoaded = true;
+
+        renderAuraFirebaseProducts();
+
+    }catch(error){
+
+        console.error(
+            "Product loading error:",
+            error
+        );
+
+        auraProductData = [];
+
+        if(grid){
+
+            grid.innerHTML = `
+                <div style="
+                    grid-column:1/-1;
+                    text-align:center;
+                    padding:80px 20px;
+                    color:#777;
+                ">
+                    Unable to load products.
+                    Please try again.
+                </div>
+            `;
+
+        }
+
+    }
+
+}
+
+
+function renderAuraFirebaseProducts(){
+
+    const grid =
+        document.getElementById(
+            "auraProductsGrid"
+        );
+
+    if(!grid) return;
+
+    if(!auraProductData.length){
+
+        grid.innerHTML = `
+            <div style="
+                grid-column:1/-1;
+                text-align:center;
+                padding:80px 20px;
+                color:#777;
+            ">
+                <h3 style="
+                    color:#fff;
+                    margin-bottom:10px;
+                ">
+                    No products available
+                </h3>
+
+                <p>
+                    Products added from the admin panel
+                    will appear here.
+                </p>
+            </div>
+        `;
+
+        return;
+
+    }
+
+    grid.innerHTML =
+        auraProductData
+            .map((product,index) => {
+
+                const badge =
+                    product.badge
+                        ? `
+                            <div class="aura-badge">
+                                ${escapeHtml(
+                                    product.badge
+                                )}
+                            </div>
+                          `
+                        : "";
+
+                const soldOut =
+                    product.stock <= 0;
+
+                return `
+
+                    <article class="aura-product-card">
+
+                        <div
+                            class="aura-product-image"
+                            onclick="openAuraProduct(${index})">
+
+                            <img
+                                src="${escapeHtml(
+                                    product.image
+                                )}"
+                                alt="${escapeHtml(
+                                    product.name
+                                )}">
+
+                            ${badge}
+
+                            <button
+                                class="aura-explore"
+                                onclick="
+                                    event.stopPropagation();
+                                    openAuraProduct(${index});
+                                ">
+
+                                EXPLORE
+
+                            </button>
+
+                        </div>
+
+                        <div class="aura-product-info">
+
+                            <div class="aura-product-category">
+                                ${escapeHtml(
+                                    product.category
+                                )}
+                            </div>
+
+                            <h3>
+                                ${escapeHtml(
+                                    product.name
+                                )}
+                            </h3>
+
+                            <div class="aura-product-rating">
+
+                                <span>
+                                    ★ ${escapeHtml(
+                                        product.rating
+                                    )}
+                                </span>
+
+                                <span>
+                                    (${escapeHtml(
+                                        product.reviews
+                                    )} reviews)
+                                </span>
+
+                            </div>
+
+                            <div class="aura-product-bottom">
+
+                                <div class="aura-product-price">
+                                    $${product.price.toFixed(2)}
+                                </div>
+
+                                <div class="aura-buttons">
+
+                                    ${
+                                        soldOut
+                                            ? `
+                                                <button
+                                                    class="aura-cart-btn"
+                                                    disabled
+                                                    style="opacity:.45;">
+                                                    SOLD OUT
+                                                </button>
+                                              `
+                                            : `
+                                                <button
+                                                    class="aura-cart-btn"
+                                                    onclick="auraAddProduct(${index})">
+                                                    ADD TO CART
+                                                </button>
+
+                                                <button
+                                                    class="aura-buy-btn"
+                                                    onclick="auraBuyProduct(${index})">
+                                                    BUY NOW
+                                                </button>
+                                              `
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                `;
+
+            })
+            .join("");
+
+}
+
+
+/* =========================================================
+   PRODUCT MODAL
+========================================================= */
+
+let auraCurrentProduct = 0;
+let auraCurrentColor = "";
+let auraCurrentSize = "";
+let auraCurrentQuantity = 1;
+let auraCurrentCustom = false;
+
+
+function openAuraProduct(index){
+
+    const product =
+        auraProductData[index];
+
+    if(!product) return;
+
+    auraCurrentProduct = index;
+    auraCurrentQuantity = 1;
+    auraCurrentCustom = false;
+
+    auraCurrentColor =
+        product.colors[0] || "";
+
+    auraCurrentSize =
+        product.sizes[0] || "";
+
+    document.getElementById(
+        "modalProductImage"
+    ).src = product.image;
+
+    document.getElementById(
+        "modalProductName"
+    ).textContent = product.name;
+
+    document.getElementById(
+        "modalProductCategory"
+    ).textContent = product.category;
+
+    document.getElementById(
+        "modalProductDescription"
+    ).textContent = product.description;
+
+    document.getElementById(
+        "modalProductRating"
+    ).textContent = product.rating;
+
+    document.getElementById(
+        "modalProductReviews"
+    ).textContent =
+        "(" + product.reviews + " reviews)";
+
+    document.getElementById(
+        "productQuantity"
+    ).textContent = "1";
+
+    renderAuraProductOptions(product);
+
+    updateAuraModalPrice();
+
+    document.getElementById(
+        "productModal"
+    ).classList.add("active");
+
+    document.body.classList.add(
+        "modal-open"
+    );
+
+}
+
+
+function renderAuraProductOptions(product){
+
+    const modalContent =
+        document.querySelector(
+            ".product-modal-content"
+        );
+
+    const old =
+        modalContent.querySelector(
+            ".aura-dynamic-options"
+        );
+
+    if(old){
+        old.remove();
+    }
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.className =
+        "aura-dynamic-options";
+
+    let html = "";
+
+    if(product.colors.length){
+
+        html += `
+
+            <div class="aura-modal-option">
+
+                <div class="aura-option-title">
+                    COLOUR
+                </div>
+
+                <div class="aura-colour-list">
+
+                    ${product.colors
+                        .map((color,index) => `
+
+                            <button
+                                class="aura-colour-choice ${
+                                    index === 0
+                                        ? "active"
+                                        : ""
+                                }"
+                                onclick="
+                                    selectAuraColour(
+                                        '${escapeHtml(color)}',
+                                        this
+                                    )
+                                ">
+
+                                ${escapeHtml(color)}
+
+                            </button>
+
+                        `)
+                        .join("")}
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+    if(product.sizes.length){
+
+        html += `
+
+            <div class="aura-modal-option">
+
+                <div class="aura-option-title">
+                    SIZE
+                </div>
+
+                <div class="aura-size-list">
+
+                    ${product.sizes
+                        .map((size,index) => `
+
+                            <button
+                                class="aura-size-choice ${
+                                    index === 0
+                                        ? "active"
+                                        : ""
+                                }"
+                                onclick="
+                                    selectAuraSize(
+                                        '${escapeHtml(size)}',
+                                        this
+                                    )
+                                ">
+
+                                ${escapeHtml(size)}
+
+                            </button>
+
+                        `)
+                        .join("")}
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+    if(product.custom > 0){
+
+        html += `
+
+            <button
+                class="aura-custom-toggle"
+                onclick="toggleAuraCustomDesign()">
+
+                <span>
+                    ✦ CUSTOM DESIGN
+                </span>
+
+                <strong>
+                    +$${product.custom.toFixed(2)}
+                </strong>
+
+            </button>
+
+        `;
+
+    }
+
+    wrapper.innerHTML = html;
+
+    const quantityOption =
+        modalContent.querySelector(
+            ".modal-option"
+        );
+
+    modalContent.insertBefore(
+        wrapper,
+        quantityOption
+    );
+
+    updateAuraCustomButton();
+
+}
+
+
+function selectAuraColour(color,button){
+
+    auraCurrentColor = color;
+
+    document
+        .querySelectorAll(
+            ".aura-colour-choice"
+        )
+        .forEach(btn =>
+            btn.classList.remove("active")
+        );
+
+    button.classList.add("active");
+
+}
+
+
+function selectAuraSize(size,button){
+
+    auraCurrentSize = size;
+
+    document
+        .querySelectorAll(
+            ".aura-size-choice"
+        )
+        .forEach(btn =>
+            btn.classList.remove("active")
+        );
+
+    button.classList.add("active");
+
+}
+
+
+function toggleAuraCustomDesign(){
+
+    auraCurrentCustom =
+        !auraCurrentCustom;
+
+    updateAuraCustomButton();
+    updateAuraModalPrice();
+
+}
+
+
+function updateAuraCustomButton(){
+
+    const button =
+        document.querySelector(
+            ".aura-custom-toggle"
+        );
+
+    if(button){
+
+        button.classList.toggle(
+            "active",
+            auraCurrentCustom
+        );
+
+    }
+
+}
+
+
+function updateAuraModalPrice(){
+
+    const product =
+        auraProductData[
+            auraCurrentProduct
+        ];
+
+    if(!product) return;
+
+    let total =
+        product.price;
+
+    if(auraCurrentCustom){
+        total += product.custom;
+    }
+
+    total *= auraCurrentQuantity;
+
+    document.getElementById(
+        "modalProductPrice"
+    ).textContent =
+        "$" + total.toFixed(2);
+
+}
+
+
+function changeProductQuantity(amount){
+
+    const product =
+        auraProductData[
+            auraCurrentProduct
+        ];
+
+    if(!product) return;
+
+    const maxStock =
+        Number(product.stock || 0);
+
+    auraCurrentQuantity += amount;
+
+    if(auraCurrentQuantity < 1){
+        auraCurrentQuantity = 1;
+    }
+
+    if(maxStock > 0 &&
+       auraCurrentQuantity > maxStock){
+
+        auraCurrentQuantity = maxStock;
+
+    }
+
+    if(auraCurrentQuantity > 99){
+        auraCurrentQuantity = 99;
+    }
+
+    document.getElementById(
+        "productQuantity"
+    ).textContent =
+        auraCurrentQuantity;
+
+    updateAuraModalPrice();
+
+}
+
+
+/* =========================================================
+   CART
+========================================================= */
+
+let cart = [];
+
+
+function addProduct(
+    name,
+    price,
+    image,
+    color="",
+    size="",
+    quantity=1,
+    extra={}
+){
+
+    const existing =
+        cart.find(item =>
+            item.name === name &&
+            item.color === color &&
+            item.size === size &&
+            Boolean(item.customDesign) ===
+            Boolean(extra.customDesign)
+        );
+
+    if(existing){
+
+        existing.quantity += quantity;
+
+    }else{
+
+        cart.push({
+
+            name,
+            price,
+            image,
+            quantity,
+            color,
+            size,
+            ...extra
+
+        });
+
+    }
+
+    updateCart();
+    openCart();
+
+}
+
+
+function updateCart(){
+
+    const cartItems =
+        document.getElementById(
+            "cartItems"
+        );
+
+    const cartCount =
+        document.getElementById(
+            "cartCount"
+        );
+
+    const cartTotal =
+        document.getElementById(
+            "cartTotal"
+        );
+
+    if(!cartItems) return;
+
+    let total = 0;
+    let count = 0;
+
+    if(!cart.length){
+
+        cartItems.innerHTML = `
+            <div class="empty-cart">
+                Your cart is empty.
+            </div>
+        `;
+
+    }else{
+
+        cartItems.innerHTML = "";
+
+        cart.forEach((item,index) => {
+
+            total +=
+                Number(item.price || 0) *
+                Number(item.quantity || 1);
+
+            count +=
+                Number(item.quantity || 1);
+
+            cartItems.innerHTML += `
+
+                <div class="cart-item">
+
+                    <img
+                        src="${escapeHtml(
+                            item.image
+                        )}"
+                        alt="${escapeHtml(
+                            item.name
+                        )}">
+
+                    <div class="cart-item-info">
+
+                        <div class="cart-item-name">
+                            ${escapeHtml(
+                                item.name
+                            )}
+                        </div>
+
+                        <div class="cart-item-price">
+                            $${Number(
+                                item.price || 0
+                            ).toFixed(2)}
+                        </div>
+
+                        <div class="cart-quantity">
+
+                            <button
+                                onclick="
+                                    changeCartQuantity(
+                                        ${index},
+                                        -1
+                                    )
+                                ">
+                                −
+                            </button>
+
+                            <span>
+                                ${Number(
+                                    item.quantity || 1
+                                )}
+                            </span>
+
+                            <button
+                                onclick="
+                                    changeCartQuantity(
+                                        ${index},
+                                        1
+                                    )
+                                ">
+                                +
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="cart-remove"
+                        onclick="
+                            removeProduct(${index})
+                        ">
+
+                        ×
+
+                    </button>
+
+                </div>
+
+            `;
+
+        });
+
+    }
+
+    cartCount.textContent =
+        count;
+
+    cartTotal.textContent =
+        "$" + total.toFixed(2);
+
+}
+
+
+async function changeCartQuantity(index,amount){
+
+    const item = cart[index];
+
+    if(!item) return;
+
+    let newQuantity =
+        Number(item.quantity || 1) +
+        amount;
+
+    if(newQuantity < 1){
+
+        cart.splice(index,1);
+
+        updateCart();
+
+        return;
+
+    }
+
+    if(item.productId){
+
+        try{
+
+            const snapshot =
+                await db
+                    .ref(
+                        "products/" +
+                        item.productId +
+                        "/stock"
+                    )
+                    .once("value");
+
+            const stock =
+                Number(
+                    snapshot.val() || 0
+                );
+
+            if(
+                stock > 0 &&
+                newQuantity > stock
+            ){
+
+                newQuantity = stock;
+
+            }
+
+        }catch(error){
+
+            console.error(error);
+
+        }
+
+    }
+
+    if(newQuantity > 99){
+        newQuantity = 99;
+    }
+
+    item.quantity =
+        newQuantity;
+
+    updateCart();
+
+}
+
+
+function removeProduct(index){
+
+    cart.splice(index,1);
+
+    updateCart();
+
+}
+
+
+function openCart(){
+
+    document
+        .getElementById("cart")
+        .classList.add("active");
+
+    document
+        .getElementById("cartOverlay")
+        .classList.add("active");
+
+}
+
+
+function toggleCart(){
+
+    const cartElement =
+        document.getElementById("cart");
+
+    const overlay =
+        document.getElementById("cartOverlay");
+
+    cartElement.classList.toggle("active");
+    overlay.classList.toggle("active");
+
+}
+
+
+function checkout(){
+
+    if(!cart.length){
+
+        alert("Your cart is empty.");
+
+        return;
+
+    }
+
+    if(!auth.currentUser){
+
+        alert(
+            "Please login before checkout."
+        );
+
+        openAuthModal();
+
+        return;
+
+    }
+
+    openAuraCheckout();
+
+}
+
+
+/* =========================================================
+   PRODUCT ACTIONS
+========================================================= */
+
+function auraAddProduct(index){
+
+    const product =
+        auraProductData[index];
+
+    if(!product) return;
+
+    if(product.stock <= 0){
+
+        alert("This product is out of stock.");
+
+        return;
+
+    }
+
+    addProduct(
+        product.name,
+        product.price,
+        product.image,
+        product.colors[0] || "",
+        product.sizes[0] || "",
+        1,
+        {
+            productId:product.id,
+            customDesign:false
+        }
+    );
+
+}
+
+
+function addCurrentProductToCart(){
+
+    const product =
+        auraProductData[
+            auraCurrentProduct
+        ];
+
+    if(!product) return;
+
+    if(
+        product.stock <= 0 ||
+        auraCurrentQuantity > product.stock
+    ){
+
+        alert("Not enough stock available.");
+
+        return;
+
+    }
+
+    let finalPrice =
+        product.price;
+
+    let finalName =
+        product.name;
+
+    if(auraCurrentCustom){
+
+        finalPrice +=
+            product.custom;
+
+        finalName +=
+            " — Custom Design";
+
+    }
+
+    addProduct(
+        finalName,
+        finalPrice,
+        product.image,
+        auraCurrentColor,
+        auraCurrentSize,
+        auraCurrentQuantity,
+        {
+            productId:product.id,
+            customDesign:auraCurrentCustom
+        }
+    );
+
+    closeProductDetail();
+
+}
+
+
+function auraCustomProduct(index){
+
+    openAuraProduct(index);
+
+    setTimeout(() => {
+
+        auraCurrentCustom = true;
+
+        updateAuraCustomButton();
+
+        updateAuraModalPrice();
+
+    },50);
+
+}
+
+
+function auraBuyProduct(index){
+
+    openAuraProduct(index);
+
+    setTimeout(() => {
+
+        auraBuyCurrentProduct();
+
+    },100);
+
+}
+
+
+function auraBuyCurrentProduct(){
+
+    const product =
+        auraProductData[
+            auraCurrentProduct
+        ];
+
+    if(!product) return;
+
+    if(
+        product.stock <= 0 ||
+        auraCurrentQuantity > product.stock
+    ){
+
+        alert("Not enough stock available.");
+
+        return;
+
+    }
+
+    let finalPrice =
+        product.price;
+
+    let finalName =
+        product.name;
+
+    if(auraCurrentCustom){
+
+        finalPrice +=
+            product.custom;
+
+        finalName +=
+            " — Custom Design";
+
+    }
+
+    openAuraCheckout({
+
+        items:[{
+
+            productId:product.id,
+
+            name:finalName,
+
+            price:finalPrice,
+
+            image:product.image,
+
+            quantity:auraCurrentQuantity,
+
+            color:auraCurrentColor,
+
+            size:auraCurrentSize,
+
+            customDesign:auraCurrentCustom
+
+        }]
+
+    });
+
+}
+
+
+function closeProductDetail(){
+
+    const modal =
+        document.getElementById(
+            "productModal"
+        );
+
+    if(modal){
+        modal.classList.remove("active");
+    }
+
+    document.body.classList.remove(
+        "modal-open"
+    );
+
+}
+
+
+/* =========================================================
+   CHECKOUT
+========================================================= */
+
+let auraCheckoutItem = null;
+
+
+function openAuraCheckout(item=null){
+
+    if(!auth.currentUser){
+
+        openAuthModal();
+
+        return;
+
+    }
+
+    let items = [];
+
+    if(item && item.items){
+
+        items = item.items;
+
+    }else if(item){
+
+        items = [item];
+
+    }else{
+
+        items = cart.map(product => ({
+            ...product
+        }));
+
+    }
+
+    if(!items.length){
+
+        alert("Your cart is empty.");
+
+        return;
+
+    }
+
+    auraCheckoutItem = {
+        items
+    };
+
+    window.auraCheckoutItem =
+        auraCheckoutItem;
+
+    const first =
+        items[0];
+
+    const total =
+        items.reduce(
+            (sum,current) =>
+                sum +
+                Number(current.price || 0) *
+                Number(current.quantity || 1),
+            0
+        );
+
+    document.getElementById(
+        "auraCheckoutName"
+    ).textContent =
+        items.length > 1
+            ? items[0].name +
+              " +" +
+              (items.length - 1) +
+              " more"
+            : first.name;
+
+    document.getElementById(
+        "auraCheckoutPrice"
+    ).textContent =
+        "$" + total.toFixed(2);
+
+    document.getElementById(
+        "auraCheckoutQuantity"
+    ).textContent =
+        items.reduce(
+            (sum,item) =>
+                sum +
+                Number(item.quantity || 1),
+            0
+        );
+
+    document.getElementById(
+        "auraCheckoutImage"
+    ).src =
+        first.image;
+
+    const user =
+        auth.currentUser;
+
+    document.getElementById(
+        "auraCustomerName"
+    ).value =
+        user.displayName || "";
+
+    document.getElementById(
+        "auraCustomerEmail"
+    ).value =
+        user.email || "";
+
+    document.getElementById(
+        "auraCheckoutModal"
+    ).classList.add("active");
+
+    document.body.classList.add(
+        "modal-open"
+    );
+
+}
+
+
+function closeAuraCheckout(){
+
+    document.getElementById(
+        "auraCheckoutModal"
+    ).classList.remove("active");
+
+    document.body.classList.remove(
+        "modal-open"
+    );
+
+}
+
+
+async function auraPlaceOrder(){
+
+    if(!auth.currentUser){
+
+        alert(
+            "Please login before placing your order."
+        );
+
+        closeAuraCheckout();
+        openAuthModal();
+
+        return;
+
+    }
+
+    const name =
+        document.getElementById(
+            "auraCustomerName"
+        ).value.trim();
+
+    const email =
+        document.getElementById(
+            "auraCustomerEmail"
+        ).value.trim();
+
+    const phone =
+        document.getElementById(
+            "auraCustomerPhone"
+        ).value.trim();
+
+    const address =
+        document.getElementById(
+            "auraCustomerAddress"
+        ).value.trim();
+
+    const paymentMethod =
+        document.getElementById(
+            "auraPaymentMethod"
+        ).value;
+
+    if(!name || !email || !phone || !address){
+
+        alert(
+            "Please complete all delivery details."
+        );
+
+        return;
+
+    }
+
+    const checkoutData =
+        window.auraCheckoutItem;
+
+    if(
+        !checkoutData ||
+        !checkoutData.items ||
+        !checkoutData.items.length
+    ){
+
+        alert(
+            "No products selected."
+        );
+
+        return;
+
+    }
+
+    const items =
+        checkoutData.items;
+
+    let total = 0;
+
+    try{
+
+        for(const item of items){
+
+            if(item.productId){
+
+                const snapshot =
+                    await db
+                        .ref(
+                            "products/" +
+                            item.productId
+                        )
+                        .once("value");
+
+                const product =
+                    snapshot.val();
+
+                if(!product){
+
+                    throw new Error(
+                        "A product in your cart no longer exists."
+                    );
+
+                }
+
+                const stock =
+                    Number(
+                        product.stock || 0
+                    );
+
+                const requested =
+                    Number(
+                        item.quantity || 1
+                    );
+
+                if(stock < requested){
+
+                    throw new Error(
+                        `${product.name} does not have enough stock.`
+                    );
+
+                }
+
+            }
+
+            total +=
+                Number(item.price || 0) *
+                Number(item.quantity || 1);
+
+        }
+
+        const orderRef =
+            db.ref("orders").push();
+
+        const orderId =
+            orderRef.key;
+
+        /*
+           Online payments are NOT marked Paid here.
+           They remain Pending until a real payment
+           gateway confirms payment.
+        */
+
+        const paymentStatus =
+            paymentMethod ===
+            "Cash on Delivery"
+                ? "Pending"
+                : "Pending Payment";
+
+        const orderData = {
+
+            orderId,
+
+            userId:
+                auth.currentUser.uid,
+
+            customerName:name,
+
+            customerEmail:email,
+
+            customerPhone:phone,
+
+            shippingAddress:address,
+
+            items:
+                items.map(item => ({
+
+                    productId:
+                        item.productId || null,
+
+                    productName:
+                        item.name || "",
+
+                    quantity:
+                        Number(
+                            item.quantity || 1
+                        ),
+
+                    price:
+                        Number(
+                            item.price || 0
+                        ),
+
+                    color:
+                        item.color || "",
+
+                    size:
+                        item.size || "",
+
+                    customDesign:
+                        Boolean(
+                            item.customDesign
+                        ),
+
+                    designText:
+                        item.designText || "",
+
+                    designColor:
+                        item.designColor || ""
+
+                })),
+
+            totalAmount:
+                Number(
+                    total.toFixed(2)
+                ),
+
+            paymentMethod,
+
+            paymentStatus,
+
+            orderStatus:
+                "Pending",
+
+            createdAt:
+                firebase.database.ServerValue
+                    .TIMESTAMP
+
+        };
+
+        await orderRef.set(
+            orderData
+        );
+
+        /*
+           Reduce stock using Firebase transactions.
+        */
+
+        for(const item of items){
+
+            if(!item.productId) continue;
+
+            const stockRef =
+                db.ref(
+                    "products/" +
+                    item.productId +
+                    "/stock"
+                );
+
+            await stockRef.transaction(
+                currentStock => {
+
+                    const stock =
+                        Number(
+                            currentStock || 0
+                        );
+
+                    const quantity =
+                        Number(
+                            item.quantity || 1
+                        );
+
+                    if(stock < quantity){
+
+                        return;
+
+                    }
+
+                    return stock - quantity;
+
+                }
+            );
+
+        }
+
+        await db
+            .ref(
+                "customers/" +
+                auth.currentUser.uid
+            )
+            .update({
+
+                uid:
+                    auth.currentUser.uid,
+
+                name,
+
+                email,
+
+                phone,
+
+                shippingAddress:address,
+
+                lastOrderId:orderId,
+
+                lastOrderAt:
+                    firebase.database.ServerValue
+                        .TIMESTAMP
+
+            });
+
+        /*
+           Clear cart after order.
+        */
+
+        cart = [];
+
+        updateCart();
+
+        closeAuraCheckout();
+
+        document.getElementById(
+            "successOrderId"
+        ).textContent =
+            orderId;
+
+        document.getElementById(
+            "successOrderAmount"
+        ).textContent =
+            "$" + total.toFixed(2);
+
+        document.getElementById(
+            "successPaymentMethod"
+        ).textContent =
+            paymentMethod;
+
+        document.getElementById(
+            "paymentSuccessPage"
+        ).style.display =
+            "flex";
+
+        loadAuraProducts();
+
+        console.log(
+            "AURA POD order created:",
+            orderData
+        );
+
+    }catch(error){
+
+        console.error(
+            "Order creation failed:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Unable to place your order. Please try again."
+        );
+
+    }
+
+}
+
+
+function closePaymentSuccess(){
+
+    document.getElementById(
+        "paymentSuccessPage"
+    ).style.display =
+        "none";
+
+    window.location.hash =
+        "#catalog";
+
+}
+
+
+/* =========================================================
+   CUSTOM DESIGN STUDIO
+========================================================= */
+
+let customDesign = {
+
+    product:"tshirt",
+
+    text:"",
+
+    textColor:"#ffffff",
+
+    imageData:"",
+
+    quantity:1
+
+};
+
+
+const customProductImages = {
+
+    tshirt:
+        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1000&q=90",
+
+    hoodie:
+        "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=1000&q=90",
+
+    cap:
+        "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=1000&q=90",
+
+    bag:
+        "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=1000&q=90"
+
+};
+
+
+function changeCustomProduct(){
+
+    const product =
+        document.getElementById(
+            "customProductType"
+        ).value;
+
+    customDesign.product =
+        product;
+
+    document.getElementById(
+        "customBaseProduct"
+    ).src =
+        customProductImages[product];
+
+}
+
+
+function updateCustomText(){
+
+    const text =
+        document.getElementById(
+            "customDesignInput"
+        ).value;
+
+    customDesign.text =
+        text;
+
+    document.getElementById(
+        "customDesignText"
+    ).textContent =
+        text || "YOUR AURA";
+
+}
+
+
+function setCustomTextColor(color){
+
+    customDesign.textColor =
+        color;
+
+    document.getElementById(
+        "customDesignText"
+    ).style.color =
+        color;
+
+}
+
+
+function uploadCustomDesignPreview(event){
+
+    const file =
+        event.target.files[0];
+
+    if(!file) return;
+
+    if(!file.type.startsWith("image/")){
+
+        showStudioMessage(
+            "Please select a valid image.",
+            true
+        );
+
+        return;
+
+    }
+
+    if(file.size > 4 * 1024 * 1024){
+
+        showStudioMessage(
+            "Please use an image smaller than 4MB.",
+            true
+        );
+
+        return;
+
+    }
+
+    const reader =
+        new FileReader();
+
+    reader.onload =
+        function(e){
+
+            customDesign.imageData =
+                e.target.result;
+
+            const image =
+                document.getElementById(
+                    "customUploadedImage"
+                );
+
+            image.src =
+                e.target.result;
+
+            image.style.display =
+                "block";
+
+            showStudioMessage(
+                "Design image added to preview."
+            );
+
+        };
+
+    reader.readAsDataURL(file);
+
+}
+
+
+function changeCustomQuantity(amount){
+
+    customDesign.quantity +=
+        amount;
+
+    if(customDesign.quantity < 1){
+        customDesign.quantity = 1;
+    }
+
+    if(customDesign.quantity > 50){
+        customDesign.quantity = 50;
+    }
+
+    document.getElementById(
+        "customQuantity"
+    ).textContent =
+        customDesign.quantity;
+
+}
+
+
+async function saveCustomDesign(){
+
+    if(!auth.currentUser){
+
+        showStudioMessage(
+            "Please login before saving your design.",
+            true
+        );
+
+        openAuthModal();
+
+        return;
+
+    }
+
+    try{
+
+        const designRef =
+            db
+                .ref("customDesigns")
+                .push();
+
+        const designData = {
+
+            designId:
+                designRef.key,
+
+            userId:
+                auth.currentUser.uid,
+
+            customerName:
+                auth.currentUser.displayName || "",
+
+            customerEmail:
+                auth.currentUser.email || "",
+
+            product:
+                customDesign.product,
+
+            customText:
+                customDesign.text,
+
+            textColor:
+                customDesign.textColor,
+
+            imageData:
+                customDesign.imageData || "",
+
+            quantity:
+                customDesign.quantity,
+
+            status:
+                "Saved",
+
+            createdAt:
+                firebase.database.ServerValue
+                    .TIMESTAMP
+
+        };
+
+        await designRef.set(
+            designData
+        );
+
+        showStudioMessage(
+            "✓ Your design has been saved to AURA POD."
+        );
+
+    }catch(error){
+
+        console.error(
+            "Custom design error:",
+            error
+        );
+
+        showStudioMessage(
+            "Could not save your design. Please try again.",
+            true
+        );
+
+    }
+
+}
+
+
+async function getStudioProduct(){
+
+    const productNames = {
+
+        tshirt:"Premium Oversized T-Shirt",
+
+        hoodie:"Architectural Heavyweight Hoodie",
+
+        cap:"Premium Structured Cap",
+
+        bag:"Heavyweight Utility Tote Bag"
+
+    };
+
+    const target =
+        productNames[
+            customDesign.product
+        ];
+
+    const local =
+        auraProductData.find(
+            product =>
+                product.name === target
+        );
+
+    if(local){
+        return local;
+    }
+
+    try{
+
+        const snapshot =
+            await db
+                .ref("products")
+                .once("value");
+
+        const data =
+            snapshot.val() || {};
+
+        const products =
+            Object.entries(data)
+                .map(([id,product]) => ({
+                    id,
+                    ...product
+                }));
+
+        return products.find(
+            product =>
+                product.name === target
+        ) || null;
+
+    }catch(error){
+
+        console.error(error);
+
+        return null;
+
+    }
+
+}
+
+
+async function addCustomDesignToCart(){
+
+    if(!auth.currentUser){
+
+        showStudioMessage(
+            "Please login before adding a custom design to cart.",
+            true
+        );
+
+        openAuthModal();
+
+        return;
+
+    }
+
+    const product =
+        await getStudioProduct();
+
+    if(!product){
+
+        showStudioMessage(
+            "This Studio product is not available in the admin catalogue.",
+            true
+        );
+
+        return;
+
+    }
+
+    if(
+        Number(product.stock || 0) <
+        customDesign.quantity
+    ){
+
+        showStudioMessage(
+            "Not enough stock available.",
+            true
+        );
+
+        return;
+
+    }
+
+    const customPrice =
+        Number(
+            product.customPrice ||
+            product.custom ||
+            0
+        );
+
+    const item = {
+
+        name:
+            product.name +
+            " — Custom Design",
+
+        productId:
+            product.id,
+
+        price:
+            Number(product.price || 0) +
+            customPrice,
+
+        image:
+            product.image ||
+            customProductImages[
+                customDesign.product
+            ],
+
+        quantity:
+            customDesign.quantity,
+
+        customDesign:true,
+
+        designText:
+            customDesign.text,
+
+        designColor:
+            customDesign.textColor,
+
+        designImage:
+            customDesign.imageData
+
+    };
+
+    cart.push(item);
+
+    updateCart();
+
+    openCart();
+
+    showStudioMessage(
+        "Custom design added to cart."
+    );
+
+}
+
+
+/* =========================================================
+   STUDIO MESSAGE
+========================================================= */
+
+function showStudioMessage(
+    message,
+    error=false
+){
+
+    const element =
+        document.getElementById(
+            "studioMessage"
+        );
+
+    if(!element) return;
+
+    element.textContent =
+        message;
+
+    element.style.color =
+        error
+            ? "#ff4d6d"
+            : "#8cffc1";
+
+}
+
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
+
+function toggleMobileMenu(){
+
+    const menu =
+        document.getElementById(
+            "mobileMenuOverlay"
+        );
+
+    if(!menu) return;
+
+    menu.classList.toggle(
+        "active"
+    );
+
+    document.body.style.overflow =
+        menu.classList.contains("active")
+            ? "hidden"
+            : "";
+
+}
+
+
+function closeMobileMenu(event){
+
+    const menu =
+        document.getElementById(
+            "mobileMenuOverlay"
+        );
+
+    if(!menu) return;
+
+    if(
+        event &&
+        event.target !== menu
+    ){
+        return;
+    }
+
+    menu.classList.remove(
+        "active"
+    );
+
+    document.body.style.overflow =
+        "";
+
+}
+
+
+/* =========================================================
+   SMOOTH SCROLL
+========================================================= */
+
+function scrollToSection(id){
+
+    const element =
+        document.getElementById(id);
+
+    if(element){
+
+        element.scrollIntoView({
+            behavior:"smooth"
+        });
+
+    }
+
+}
+
+
+/* =========================================================
+   DIAMOND MOUSE MOVEMENT
+========================================================= */
+
+const stage =
+    document.getElementById(
+        "diamondStage"
+    );
+
+const diamonds =
+    document.querySelectorAll(
+        ".diamond"
+    );
+
+
+if(stage){
+
+    stage.addEventListener(
+        "mousemove",
+        function(e){
+
+            const rect =
+                stage.getBoundingClientRect();
+
+            const x =
+                e.clientX -
+                rect.left;
+
+            const y =
+                e.clientY -
+                rect.top;
+
+            const centerX =
+                rect.width / 2;
+
+            const centerY =
+                rect.height / 2;
+
+            const rotateY =
+                ((x-centerX)/centerX)*9;
+
+            const rotateX =
+                ((y-centerY)/centerY)*-9;
+
+            diamonds.forEach(
+                diamond => {
+
+                    const depth =
+                        parseFloat(
+                            diamond.dataset.depth ||
+                            1
+                        );
+
+                    diamond.style.transform =
+                        `translate3d(
+                            ${rotateY * depth}px,
+                            ${rotateX * depth}px,
+                            ${20 * depth}px
+                        )`;
+
+                }
+            );
+
+        }
+    );
+
+    stage.addEventListener(
+        "mouseleave",
+        function(){
+
+            diamonds.forEach(
+                diamond => {
+
+                    diamond.style.transform =
+                        "";
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   LEGAL
+========================================================= */
+
+function openLegal(type){
+
+    const modal =
+        document.getElementById(
+            type === "privacy"
+                ? "privacyModal"
+                : "termsModal"
+        );
+
+    if(modal){
+        modal.classList.add("active");
+    }
+
+}
+
+
+function closeLegal(type){
+
+    const modal =
+        document.getElementById(
+            type === "privacy"
+                ? "privacyModal"
+                : "termsModal"
+        );
+
+    if(modal){
+        modal.classList.remove("active");
+    }
+
+}
+
+
+/* =========================================================
+   ESC KEY
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key !== "Escape"){
+            return;
+        }
+
+        closeAuthModal();
+        closeProductDetail();
+        closeAuraCheckout();
+
+        closeLegal("privacy");
+        closeLegal("terms");
+
+        const menu =
+            document.getElementById(
+                "mobileMenuOverlay"
+            );
+
+        if(menu){
+            menu.classList.remove("active");
+        }
+
+        document.body.style.overflow = "";
+
+    }
+);
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+updateCart();
+
+loadAuraProducts();
+
+</script>
+
+</body>
+</html>
